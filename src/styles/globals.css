@@ -32,3 +32,18 @@ body {
     "colors.primary.regular"
   )}, 0 0 5px ${get(theme, "colors.primary.regular")}`, */
 }
+
+.connect-wallet-btn {
+  background: transparent;  
+  text-align: center;
+  color: #FCFCFD;
+  flex: none;
+  order: 0;
+  border: 0px;
+  flex-grow: 0;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px; 
+}

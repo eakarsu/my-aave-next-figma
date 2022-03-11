@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -11,6 +10,7 @@ import styles from "./header.module.css";
 // import images
 import Logo from "../../../assets/logo.png";
 import Divide from "../../../assets/divide.png";
+import ConnectWallet from "../../ConnectWallet";
 
 const Header = () => {
   const router = useRouter();
@@ -42,6 +42,10 @@ const Header = () => {
   const closeNav = () => {
     setState(false);
   };
+
+  const connectWalletFunc = () => {
+
+  }
 
   return (
     <React.Fragment>
@@ -103,6 +107,12 @@ const Header = () => {
               onClick={() => router.push("/addnetwork")}
             >
               Add Network
+            </div>
+            <div className={`${styles.menubar} ${
+                router.route === "/addnetwork" && styles.active
+              }`}
+              >
+              <ConnectWallet />
             </div>
           </div>
         </div>
