@@ -12,6 +12,10 @@ export function getChainIdByName(str){
         chainId = 137;
     }
 
+    if(str == "Kovan"){
+        chainId = 42;
+    }
+
     return chainId;
 }
 
@@ -26,9 +30,12 @@ export function getRPCByChainID(chainId){
         rpc ="https://bsc-dataseed.binance.org/";
     }
 
-    if(chainId ==137){
+    if(chainId == 137){
         rpc = "https://polygon-rpc.com/";
     }
+
+    if(chainId == 42)
+        rpc ="https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
 
     return rpc;
 }

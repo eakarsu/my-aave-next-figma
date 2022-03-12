@@ -111,7 +111,7 @@ export const Web3ContextProvider=({ children }) => {
 
     const checkWrongNetwork = async () => {
         if (providerChainID !== getChainIdByName(network)) {
-            const shouldSwitch = window.confirm(`Switch to ${network} Main Network`);
+            const shouldSwitch = window.confirm(`Switch to ${network} Network`);
             if (shouldSwitch) {
                 await swithNetwork(network);
                 // window.location.reload();

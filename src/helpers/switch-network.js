@@ -5,6 +5,8 @@ const getHexChainIdByName=(network)=>{
         return 38;
     if(network == "Polygon")
         return 89
+    if(network == "Kovan")
+        return '2A'
 
     return 1;
 }
@@ -35,6 +37,18 @@ const getChainInfo=(network)=>{
                 decimals: 18,
             },
         }
+    if(network == "Kovan")
+        return {
+            chainId: "0x2A",
+            chainName: "Kovan Test Network",
+            rpcUrls:["https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
+            blockExplorerUrls:["https://kovan.etherscan.io"],
+            nativeCurrency: {
+                name: "ETH",
+                symbol: "ETH",
+                decimals: 18,
+        },
+    }
 
     return {};
 }

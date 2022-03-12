@@ -3,13 +3,11 @@ import { createSlice } from '@reduxjs/toolkit'
 export const networkSlice = createSlice({
   name: 'network',
   initialState: {
-    name: "Ethereum",
-    scanurl:"https://etherscan.io"
+    name: "Kovan",
   },
   reducers: {
     changeNetwork: (state, action) => {
       state.name = action.payload.name;
-      state.scanurl=action.payload.scanurl;
     },
   },
 })

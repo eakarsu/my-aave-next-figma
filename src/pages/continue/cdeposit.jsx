@@ -1,5 +1,5 @@
-import React from 'react'
-
+import React, {useEffect, useState} from 'react'
+import { useDispatch } from "react-redux";
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
@@ -12,8 +12,64 @@ import data from './data.json'
 
 import styles from './share.module.css'
 
+import { useWeb3Context } from '../../hooks/web3/web3-context';
+import { useLendingPoolContract, useStandardContract } from "../../hooks/useContract";
+import {changeReserves, changeBalances, changeCurrentReserve} from "../../store/slices/reserves-slice"
+
 const CDeposit = () => {
     const router = useRouter()
+    const {address} =  useWeb3Context();
+    const [availableReserves, setAReserves] =  useState([]);
+
+    const lpContract =  useLendingPoolContract();
+    const tokenList = [
+        {
+            address:"0x04DF6e4121c27713ED22341E7c7Df330F56f289B",
+            decimal:18,
+            symbol:'DAI'
+        }        
+    ]
+    const dispatch = useDispatch();
+
+    useEffect(async()=>{
+        const reserves = await lpContract.methods.getReservesList().call();
+        dispatch(changeReserves(reserves));
+        if(address){
+            let balances = [];
+            await tokenList.forEach(async(v,i)=>{
+                const ct=useStandardContract(v.address);
+                console.log('-');
+                let balance = 0;
+                await ct.methods.balanceOf(address).call().then((value) => {
+                    console.log(value/Math.pow(10,v.decimal));
+                    balance =  (value/Math.pow(10,v.decimal));    
+                    balances.push({address:v.address, decimal:v.decimal, symbol:v.symbol, balance:balance});        
+                });                
+
+                if(i===tokenList.length-1){
+                    console.log(balances);
+                    setAReserves(balances);
+                    dispatch(changeBalances(balances));
+                }
+                
+                
+                
+            })
+            console.log(balances);
+        }                
+        
+    },[address])
+
+    useEffect(async() => {
+        
+        
+    }, [address]);
+
+
+    const setCurrentReserve = (address) => {
+        dispatch(changeCurrentReserve(address));
+        router.push(`/deposit`);
+    }
 
     return (
         <div className={styles.cdeposit}>
@@ -52,19 +108,19 @@ const CDeposit = () => {
                         </div>
                         <div className={styles.tablebody}>
                             {
-                                data.map((item, index) => (
-                                    <div className={styles.tr} key={index} onClick={() => router.push('/deposit')}>
+                                availableReserves.map((item, index) => (
+                                    <div className={styles.tr} key={index} onClick={() => {setCurrentReserve(item.address)}}>
                                         <div className={styles.assets}>
                                             <div className={styles.image}>
-                                                <Image src={DAI} alt="DAI" width={41} height={41} />
+                                                <Image src={DAI} alt={item.symbol} width={41} height={41} />
                                             </div>
-                                            <div className={styles.title}>{item.assets}</div>
+                                            <div className={styles.title}>{item.symbol}</div>
                                         </div>
                                         <div className={styles.ballance}>
-                                            <div className={styles.ballance1}>{item.ballance1}</div>
-                                            <div className={styles.ballance2}>{item.ballance2}</div>
+                                            <div className={styles.ballance1}>{item.balance}</div>
+                                            <div className={styles.ballance2}></div>
                                         </div>
-                                        <div className={styles.rate}>{item.rate}</div>
+                                        <div className={styles.rate}></div>
                                     </div>
                                 ))
                             }

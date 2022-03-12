@@ -1,17 +1,53 @@
-import React from "react";
+import React,{useEffect, useState} from "react";
 import Image from "next/image";
 import { useRouter } from "next/router"
+
+import { useSelector } from "react-redux";
 
 import styles from "./deposit.module.css";
 
 import Minimize from "../../assets/minimize.png";
 import SmallD from "../../assets/smallD.png";
 import BigD from "../../assets/bigD.png";
+import { useLendingPoolContract } from "../../hooks/useContract";
+import { useWeb3Context } from "../../hooks/web3/web3-context";
+
 
 const Deposit = () => {
     const router = useRouter();
+    const {address} = useWeb3Context();
+    const currentReserve = useSelector((state) => state.reserves.currentReserve);
+    const balances =  useSelector((state)=>state.reserves.balances);
 
+    const lpContract =  useLendingPoolContract();
+
+    const [info, setInfo] = useState(null);
     const [dai, setDAI] = React.useState(10);
+
+    useEffect(() => {
+        if(currentReserve == ''){
+            router.push('/continue/cdeposit');
+        }
+
+
+        const idx = balances.findIndex(d=>d.address == currentReserve);
+        console.log(idx);
+        if(idx !==-1){
+            setInfo(balances[idx]);
+            console.log(info);
+        }
+        console.log(currentReserve);
+    }, [currentReserve]);   
+
+    const deposit = async() => {
+        
+        try{
+            await lpContract.methods.deposit(info.address,BigInt(dai* 1e18), address, 0).send({from: address, gas: 200000 });
+        } catch(err){
+            console.log('error--------');
+        }
+        
+    }
 
     return (
         <>
@@ -20,13 +56,13 @@ const Deposit = () => {
                     <div className={styles.group}>
                         <div className={styles.title}>Your balance in Prosperity</div>
                         <div className={styles.amount}>
-                            <b>30.0003</b> DAI
+                            <b>30.0003</b> {info?.symbol}
                         </div>
                     </div>
                     <div className={styles.group}>
                         <div className={styles.title}>Your wallet balance</div>
                         <div className={styles.amount}>
-                            <b>9,990.0000</b> DAI
+                            <b>{info?.balance.toFixed(4)}</b> {info?.symbol}
                         </div>
                     </div>
                 </div>
@@ -109,17 +145,18 @@ const Deposit = () => {
                             <input
                                 type="range"
                                 in="1"
-                                max="100"
+                                max={info?.balance}
                                 className={styles.slider}
                                 onChange={(e) => setDAI(e.target.value)}
                                 value={dai}
                             />
                         </div>
-                        <div
+                        <button
                             className={styles.continue}
+                            onClick ={() => {deposit()}}
                         >
                             Continue
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>

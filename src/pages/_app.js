@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Provider } from "react-redux";
+import { useDispatch } from "react-redux";
 import Web3 from 'web3'
 import Head from "next/head";
 import NProgress from "nprogress";
@@ -12,6 +13,7 @@ import AppLayout from "../components/Layout/AppLayout/AppLayout";
 import "../styles/globals.css";
 
 
+
 NProgress.configure({ showSpinner: false });
 
 Router.events.on("routeChangeStart", () => NProgress.start());
@@ -20,6 +22,7 @@ Router.events.on("routeChangeError", () => NProgress.done());
 
 function MyApp({ Component, pageProps }) {
 
+  
   return (    
         <React.Fragment>          
           <Head>
