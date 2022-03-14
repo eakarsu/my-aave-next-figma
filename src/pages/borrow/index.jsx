@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -7,11 +7,67 @@ import styles from "./borrow.module.css";
 import Minimize from "../../assets/minimize.png";
 import SmallD from "../../assets/smallD.png";
 import BigD from "../../assets/bigD.png";
+import { useWeb3Context } from "../../hooks/web3";
+import { useSelector } from "react-redux";
+import { useLendingPoolContract } from "../../hooks/useContract";
+import BigNumber from "bignumber.js";
 
 const Borrow = () => {
     const router = useRouter();
+    const {address} = useWeb3Context();
+    const currentReserve = useSelector((state) => state.reserves.currentReserve);
+    const borrowable =  useSelector((state)=>state.reserves.borrowable);
+    const borrowed =  useSelector((state)=>state.reserves.borrowed);
+    const pricesETH = useSelector((state)=>state.reserves.pricesETH);
 
-    const [dai, setDAI] = useState(10);
+    const lpContract =  useLendingPoolContract();
+
+    const [info, setInfo] = useState(null);
+    const [price, setPrice] = useState(0);
+    const [amount, setAmount] = useState(0);
+
+    useEffect(() => {
+        if(currentReserve == ''){
+            router.push('/continue/cborrow');
+        }
+        const idx = borrowable.findIndex(d=>d.address == currentReserve);
+        if(idx !==-1){
+            setInfo(borrowable[idx]);
+        }        
+    }, [currentReserve]);
+    
+    useEffect(()=>{
+        const getPrice = () => {
+            const data =  pricesETH.find((d)=>d.address == currentReserve);
+            if(data != null){
+                const p = data.price/Math.pow(10, 18);
+                console.log(p); 
+                setPrice(p);                
+            }            
+        };
+        getPrice();
+    },[pricesETH])
+
+    const borrow = async() => {
+        try{                        
+            await lpContract.methods.borrow(info.address,new BigNumber(Number(amount)* Math.pow(10,info.decimal)) ,1, 0,address).send({from: address});                            
+        } catch(err){
+            console.log('error--------');
+        }
+        
+    }
+
+    const getBorrowed = () =>{
+        const data = borrowed.find((d)=>d.address == currentReserve);
+        if(data != null){
+            return data.balance.toFixed(4);
+        }
+        return 0;
+    }
+
+    const getAPR = () => {        
+        return 0;
+    }
 
     return (
         <>
@@ -20,13 +76,13 @@ const Borrow = () => {
                     <div className={styles.group}>
                         <div className={styles.title}>Your borrowed</div>
                         <div className={styles.amount}>
-                            <b>10.0003</b> DAI
+                            <b>{getBorrowed()}</b> {info?.symbol}
                         </div>
                     </div>
                     <div className={styles.group}>
                         <div className={styles.title}>Total collateral</div>
                         <div className={styles.amount}>
-                            <b>75.8309</b> USD
+                            <b>{info?.balance.toFixed(4)}</b> {info?.symbol}
                         </div>
                     </div>
                     <div className={styles.group}>
@@ -41,12 +97,12 @@ const Borrow = () => {
                 <div className={styles.container}>
                     <div className={styles.modal}>
                         <div className={styles.modaltitle}>
-                            <div>Borrow DAI</div>
+                            <div>Borrow {info?.symbol}</div>
                             <div className={styles.minimize}>
                                 <div>
                                     <Image src={SmallD} alt="DField" width={19} height={19} />
                                 </div>
-                                <div>DAI Reserve Overview</div>
+                                <div>{info?.symbol} Reserve Overview</div>
                             </div>
                             <div className={styles.minimize}>
                                 <div>
@@ -60,7 +116,7 @@ const Borrow = () => {
                             <div className={styles.mgroup1}>
                                 <div className={styles.price}>Asset price</div>
                                 <div className={styles.price}>
-                                    <b>$1.01</b> USD
+                                    <b>{price.toFixed(4)}</b> ETH
                                 </div>
                             </div>
                             <div className={styles.mgroup2}>
@@ -83,7 +139,7 @@ const Borrow = () => {
                         <div className={styles.labels}>
                             <div className={styles.label}>Available to borrow</div>
                             <div className={styles.label}>
-                                <b>38.17984</b> DAI
+                                <b>{info?.balance.toFixed(4)}</b> {info?.symbol}
                             </div>
                         </div>
                         <div className={styles.values}>
@@ -95,8 +151,8 @@ const Borrow = () => {
                                     <input
                                         type="text"
                                         className={styles.input}
-                                        value={dai}
-                                        onChange={(e) => setDAI(e.target.value)}
+                                        value={amount}
+                                        onChange={(e) => setAmount(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -111,17 +167,17 @@ const Borrow = () => {
                             <input
                                 type="range"
                                 in="1"
-                                max="100"
+                                max={info?.balance}
                                 className={styles.slider}
-                                onChange={(e) => setDAI(e.target.value)}
-                                value={dai}
+                                onChange={(e) => setAmount(e.target.value)}
+                                value={amount}
                             />
                         </div>
-                        <div
+                        <button onClick={()=>{borrow()}}
                             className={styles.continue}
                         >
                             Continue
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>

@@ -150,7 +150,7 @@ const Deposit = () => {
                             <div className={styles.mgroup1}>
                                 <div className={styles.price}>Asset price</div>
                                 <div className={styles.price}>
-                                    <b>{price.toFixed(5)}</b> ETH
+                                    <b>{price.toFixed(4)}</b> ETH
                                 </div>
                             </div>
                             <div className={styles.mgroup2}>

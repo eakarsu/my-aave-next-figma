@@ -7,12 +7,15 @@ import DAI from '../../assets/dai.png'
 import Divide from '../../assets/divide3.png'
 import Search from '../../assets/search.png'
 import Down from '../../assets/down.png'
+import KovanAssets from '../../constants/kovan.json';
 
 import styles from './share.module.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { useDataProvider } from '../../hooks/useDataProvider'
-import { changeCurrentReserve } from '../../store/slices/reserves-slice'
+import { changeBorrowable, changeCurrentReserve } from '../../store/slices/reserves-slice'
 import { useWeb3Context } from '../../hooks/web3/web3-context'
+import { useLendingPoolContract } from '../../hooks/useContract'
+import BigNumber from 'bignumber.js'
 
 const CBorrow = () => {
 
@@ -20,16 +23,18 @@ const CBorrow = () => {
     const router = useRouter()
     const {address} =  useWeb3Context();
     const reserveData = useSelector((state)=>state.reserves.reserveData);
-    const deposited = useSelector((state)=>state.reserves.deposited);
-    const balances = useSelector((state)=>state.reserves.balances);
+    const pricesETH = useSelector((state)=>state.reserves.pricesETH);
+    const borrowed = useSelector((state)=>state.reserves.borrowed);
 
-    const {initialReserveData, initialDepositedBalance, initialBalance, initialReservePriceETH} = useDataProvider();
+    const {initialReserveData, initialBalance, initialReservePriceETH, initialBorrowedBalance} = useDataProvider();
     const dispatch = useDispatch();
+
+    const lpContract = useLendingPoolContract();
 
     useEffect(async()=>{
         if(address){
             initialBalance(address);
-            initialDepositedBalance(address);
+            initialBorrowedBalance(address);            
         }                        
     },[address])
     
@@ -39,11 +44,45 @@ const CBorrow = () => {
         initialReservePriceETH();
     },[])
 
+    useEffect(async()=>{
+        if(address){
+            if(pricesETH.length>0){
+                let borrowable = [];
+                await lpContract.methods.getUserAccountData(address).call().then((value)=>{
+                    const availableBorrowsETH = value.availableBorrowsETH;
+                    pricesETH.forEach((d,i)=>{
+                        const availableAmount = availableBorrowsETH/d.price;
+                        const availableLiquidity = reserveData[i]?.availableLiquidity||0;
+                        const availableLqAmount = BigNumber(availableLiquidity)/Math.pow(10,d.decimal);
+                        const minVal = Math.min(availableAmount, availableLqAmount);
+                        if(minVal>0.01){
+                            borrowable = [...borrowable, {address:d.address, decimal:d.decimal, symbol:d.symbol, balance:minVal}]
+                        }            
+                        if(i === pricesETH.length-1){
+                            setBrrowableList(borrowable);
+                            dispatch(changeBorrowable(borrowable));
+                            console.log(borrowable);
+                        }
+                    })
+                   
+                })
+                
+            }
+        }
+        
+    },[pricesETH, address])
+
 
     const getAPR = (asset) => {
         const data = reserveData.find((d)=>d.address == asset);
         if(data != null){
-            return data.liquidityRate/Math.pow(10,27);
+            if(data.stableBorrowRate>0){
+                return data.stableBorrowRate/Math.pow(10,27);
+            }else{
+                return data.variableBorrowRate/Math.pow(10,27);
+            }
+            
+            
         }
         return 0;        
     }
@@ -99,7 +138,7 @@ const CBorrow = () => {
                         <div className={styles.tablebody}>
                             {
                                 borrowableList.map((item, index) => (
-                                    <div className={styles.tr} key={index} onClick={() => router.push('/borrow')}>
+                                    <div className={styles.tr} key={index} onClick={() => setCurrentReserve(item.address)}>
                                         <div className={styles.assets}>
                                             <div className={styles.image}>
                                                 <Image src={DAI} alt={item.symbol} width={41} height={41} />
@@ -107,7 +146,7 @@ const CBorrow = () => {
                                             <div className={styles.title}>{item.symbol}</div>
                                         </div>
                                         <div className={styles.ballance}>{item.balance.toFixed(2)}</div>
-                                        <div className={styles.rate}>{}</div>
+                                        <div className={styles.rate}>{getAPR(item.address).toFixed(3)}%</div>
                                     </div>
                                 ))
                             }
@@ -116,31 +155,26 @@ const CBorrow = () => {
                 </div>
                 <div className={styles.resultmodal}>
                     <div className={styles.resultmodalheader}>
-                        <div className={styles.normal}>My deposits</div>
+                        <div className={styles.normal}>My borrows</div>
                     </div>
                     <div className={styles.resultmodalbody}>
-                        <div className={styles.modalbody}>
-                            <div className={styles.reassets}>
-                                <div className={styles.image}>
-                                    <Image src={DAI} alt="DAI" width={41} height={41} />
-                                </div>
-                                <div className={styles.title}>DAI</div>
-                            </div>
-                            <div className={styles.normal}>20. 00000987</div>
-                        </div>
-                        <div className={styles.modalbody}>
-                            <div className={styles.reassets}>
-                                <div className={styles.image}>
-                                    <Image src={DAI} alt="DAI" width={41} height={41} />
-                                </div>
-                                <div className={styles.title}>Bitcoin</div>
-                            </div>
-                            <div className={styles.normal}>10. 00000987</div>
-                        </div>
-                        <div className={styles.resultmodalfooter}>
+                        {
+                            borrowed.map((item,i)=>{
+                                return <div key={i} className={styles.modalbody}>
+                                            <div className={styles.reassets}>
+                                                <div className={styles.image}>
+                                                    <Image src={DAI} alt={item.symbol} width={41} height={41} />
+                                                </div>
+                                                <div className={styles.title}>{item.symbol}</div>
+                                            </div>
+                                            <div className={styles.normal}>{item.balance.toFixed(4)}</div>
+                                        </div>
+                            })
+                        }                        
+                        {/* <div className={styles.resultmodalfooter}>
                             <div className={styles.normal}>Total</div>
                             <div className={styles.normal}>$30.56</div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
