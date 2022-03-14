@@ -1,4 +1,6 @@
 import React,{useEffect, useState} from "react";
+import BigNumber from 'bignumber.js';
+
 import Image from "next/image";
 import { useRouter } from "next/router"
 
@@ -9,27 +11,32 @@ import styles from "./deposit.module.css";
 import Minimize from "../../assets/minimize.png";
 import SmallD from "../../assets/smallD.png";
 import BigD from "../../assets/bigD.png";
-import { useLendingPoolContract } from "../../hooks/useContract";
+
+import { getAddresses } from "../../constants";
+import { useLendingPoolContract, useStandardContract, usePriceOracleContract } from "../../hooks/useContract";
 import { useWeb3Context } from "../../hooks/web3/web3-context";
 
 
 const Deposit = () => {
     const router = useRouter();
+    const contractAddress = getAddresses();
     const {address} = useWeb3Context();
     const currentReserve = useSelector((state) => state.reserves.currentReserve);
     const balances =  useSelector((state)=>state.reserves.balances);
+    const deposited =  useSelector((state)=>state.reserves.deposited);
+    const reserveData = useSelector((state)=>state.reserves.reserveData);
+
+    const [isApproved, setApprove] = useState(false);
 
     const lpContract =  useLendingPoolContract();
 
     const [info, setInfo] = useState(null);
-    const [dai, setDAI] = React.useState(10);
+    const [amount, setAmount] = React.useState(0);
 
     useEffect(() => {
         if(currentReserve == ''){
             router.push('/continue/cdeposit');
         }
-
-
         const idx = balances.findIndex(d=>d.address == currentReserve);
         console.log(idx);
         if(idx !==-1){
@@ -37,16 +44,55 @@ const Deposit = () => {
             console.log(info);
         }
         console.log(currentReserve);
-    }, [currentReserve]);   
+    }, [currentReserve]);
+    
+
+
+    const isAllowance = async() =>{
+        if(!info)
+            return false;
+
+        const ct=useStandardContract(info.address);
+        const allow =  await ct.methods.allowance(address,contractAddress.LENDINGPOOL_ADDRESS).call();
+        console.log('allow',allow);
+        return allow>0;
+    }
+
+    const approve = async() =>{
+        try{
+            const ct=useStandardContract(info.address);
+            await ct.methods.approve(contractAddress.LENDINGPOOL_ADDRESS,new BigNumber(Number(info.balance)* Math.pow(10,info.decimal))).send({from: address});
+            setApprove(true)
+        }catch(err){
+            console.log('err--approve');
+        }
+        
+    }
 
     const deposit = async() => {
         
-        try{
-            await lpContract.methods.deposit(info.address,BigInt(dai* 1e18), address, 0).send({from: address, gas: 200000 });
+        try{                        
+            await lpContract.methods.deposit(info.address,new BigNumber(Number(amount)* Math.pow(10,info.decimal)) , address, 0).send({from: address});                            
         } catch(err){
             console.log('error--------');
         }
         
+    }
+
+    const getDeposited = () =>{
+        const data = deposited.find((d)=>d.address == currentReserve);
+        if(data != null){
+            return data.balance.toFixed(4);
+        }
+        return 0;
+    }
+
+    const getAPR = () => {
+        const data = reserveData.find((d)=>d.address == currentReserve);
+        if(data != null){
+            return (data.liquidityRate/Math.pow(10,27)).toFixed(4);
+        }
+        return 0;
     }
 
     return (
@@ -56,7 +102,7 @@ const Deposit = () => {
                     <div className={styles.group}>
                         <div className={styles.title}>Your balance in Prosperity</div>
                         <div className={styles.amount}>
-                            <b>30.0003</b> {info?.symbol}
+                            <b>{getDeposited()}</b> {info?.symbol}
                         </div>
                     </div>
                     <div className={styles.group}>
@@ -71,12 +117,12 @@ const Deposit = () => {
                 <div className={styles.container}>
                     <div className={styles.modal}>
                         <div className={styles.modaltitle}>
-                            <div>Deposit DAI</div>
+                            <div>Deposit {info?.symbol}</div>
                             <div className={styles.minimize}>
                                 <div>
                                     <Image src={SmallD} alt="DField" width={15} height={15} />
                                 </div>
-                                <div>DAI Reserve Overview</div>
+                                <div>{info?.symbol} Reserve Overview</div>
                             </div>
                             <div className={styles.minimize}>
                                 <div>
@@ -96,7 +142,7 @@ const Deposit = () => {
                             <div className={styles.mgroup2}>
                                 <div className={styles.price}>Profile sharing rate</div>
                                 <div className={styles.price}>
-                                    <b>$1.01</b> USD
+                                    <b>{getAPR()}</b> %
                                 </div>
                             </div>
                             <div className={styles.mgroup3}>
@@ -115,9 +161,9 @@ const Deposit = () => {
                             The maximum amount you can deposit is shown below.
                         </div>
                         <div className={styles.labels}>
-                            <div className={styles.label}>Available to borrow</div>
+                            <div className={styles.label}>Available to Deposit</div>
                             <div className={styles.label}>
-                                <b>38.17984</b> DAI
+                                <b>{info?.balance.toFixed(4)}</b> {info?.symbol}
                             </div>
                         </div>
                         <div className={styles.values}>
@@ -129,8 +175,8 @@ const Deposit = () => {
                                     <input
                                         type="text"
                                         className={styles.input}
-                                        value={dai}
-                                        onChange={(e) => setDAI(e.target.value)}
+                                        value={amount}
+                                        onChange={(e) => setAmount(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -147,16 +193,25 @@ const Deposit = () => {
                                 in="1"
                                 max={info?.balance}
                                 className={styles.slider}
-                                onChange={(e) => setDAI(e.target.value)}
-                                value={dai}
+                                onChange={(e) => setAmount(e.target.value)}
+                                value={amount}
                             />
                         </div>
-                        <button
-                            className={styles.continue}
-                            onClick ={() => {deposit()}}
-                        >
-                            Continue
-                        </button>
+                        {
+                            !isApproved?
+                            <button
+                                className={styles.continue}
+                                onClick ={() => {approve()}}
+                            >
+                                Approve
+                            </button>:
+                            <button
+                                className={styles.continue}
+                                onClick ={() => {deposit()}}
+                            >
+                                Deposit
+                            </button>
+                        }                                            
                     </div>
                 </div>
             </div>

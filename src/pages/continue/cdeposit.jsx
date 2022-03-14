@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
@@ -13,43 +13,72 @@ import data from './data.json'
 import styles from './share.module.css'
 
 import { useWeb3Context } from '../../hooks/web3/web3-context';
-import { useLendingPoolContract, useStandardContract } from "../../hooks/useContract";
-import {changeReserves, changeBalances, changeCurrentReserve} from "../../store/slices/reserves-slice"
+import { useATokenContract, useDataProviderContract, useStandardContract } from "../../hooks/useContract";
+import {changeReserves, changeBalances, changeCurrentReserve, changeReserveData, changeDeposited} from "../../store/slices/reserves-slice";
+import KovanAssets from '../../constants/kovan.json';
+import { useDataProvider } from '../../hooks/useDataProvider';
 
 const CDeposit = () => {
     const router = useRouter()
     const {address} =  useWeb3Context();
+    const reserveData = useSelector((state)=>state.reserves.reserveData);
     const [availableReserves, setAReserves] =  useState([]);
+    const [depositedReserves, setDReserves] = useState([]);
 
-    const lpContract =  useLendingPoolContract();
-    const tokenList = [
-        {
-            address:"0x04DF6e4121c27713ED22341E7c7Df330F56f289B",
-            decimal:18,
-            symbol:'DAI'
-        }        
-    ]
+    const dpContract = useDataProviderContract();
+    const {initialReserveData} = useDataProvider();
     const dispatch = useDispatch();
 
     useEffect(async()=>{
-        const reserves = await lpContract.methods.getReservesList().call();
-        dispatch(changeReserves(reserves));
         if(address){
             let balances = [];
-            await tokenList.forEach(async(v,i)=>{
+            await KovanAssets.proto.forEach(async(v,i)=>{
                 const ct=useStandardContract(v.address);
                 console.log('-');
-                let balance = 0;
+                
                 await ct.methods.balanceOf(address).call().then((value) => {
-                    console.log(value/Math.pow(10,v.decimal));
-                    balance =  (value/Math.pow(10,v.decimal));    
-                    balances.push({address:v.address, decimal:v.decimal, symbol:v.symbol, balance:balance});        
+                    console.log(value/Math.pow(10,v.decimals));
+                    const balance = (value/Math.pow(10,v.decimals));    
+                    if(balance>0){
+                        balances =[...balances, {address:v.address, decimal:v.decimals, symbol:v.symbol, balance:balance}];        
+                    }
+                    
                 });                
 
-                if(i===tokenList.length-1){
+                if(i===KovanAssets.proto.length-1){
                     console.log(balances);
                     setAReserves(balances);
                     dispatch(changeBalances(balances));
+                }                                
+                
+            })
+            console.log(balances);
+        }                
+        
+    },[address])
+
+    useEffect(async()=>{
+        if(address){
+            let balances = [];
+            console.log('--------deposited tokens');
+            await KovanAssets.proto.forEach(async(v,i)=>{
+                const ct=useATokenContract(v.aTokenAddress);
+                console.log('-');
+                
+                await ct.methods.balanceOf(address).call().then((value) => {
+                    console.log(value/Math.pow(10,v.decimals));
+                    const balance = (value/Math.pow(10,v.decimals));    
+                    if(balance>0){
+                        balances = [...balances,{address:v.address,aTokenAddress:v.aTokenAddress, decimal:v.decimals, symbol:v.symbol, balance:balance}];        
+                    }
+                    
+                });                
+
+                if(i===KovanAssets.proto.length-1){
+                    console.log(balances);
+                    setDReserves(balances);
+                    console.log('deposited',depositedReserves);
+                    dispatch(changeDeposited(balances));
                 }
                 
                 
@@ -60,11 +89,23 @@ const CDeposit = () => {
         
     },[address])
 
-    useEffect(async() => {
-        
-        
-    }, [address]);
+    
+    useEffect(()=>{
+        console.log('dfdfdsfadfasfas');
+        initialReserveData();
+    },[])
 
+
+    const getAPR = (asset) => {
+        // cls
+        const data = reserveData.find((d)=>d.address == asset);
+        if(data != null){
+            console.log(data);
+            return data.liquidityRate/Math.pow(10,27);
+        }
+        return 0;
+        
+    }
 
     const setCurrentReserve = (address) => {
         dispatch(changeCurrentReserve(address));
@@ -117,10 +158,10 @@ const CDeposit = () => {
                                             <div className={styles.title}>{item.symbol}</div>
                                         </div>
                                         <div className={styles.ballance}>
-                                            <div className={styles.ballance1}>{item.balance}</div>
+                                            <div className={styles.ballance1}>{item?.balance.toFixed(4)}</div>
                                             <div className={styles.ballance2}></div>
                                         </div>
-                                        <div className={styles.rate}></div>
+                                        <div className={styles.rate}>{item?getAPR(item.address).toFixed(4):''}%</div>
                                     </div>
                                 ))
                             }
@@ -132,28 +173,19 @@ const CDeposit = () => {
                         <div className={styles.normal}>My deposits</div>
                     </div>
                     <div className={styles.resultmodalbody}>
-                        <div className={styles.modalbody}>
-                            <div className={styles.reassets}>
-                                <div className={styles.image}>
-                                    <Image src={DAI} alt="DAI" width={41} height={41} />
-                                </div>
-                                <div className={styles.title}>DAI</div>
-                            </div>
-                            <div className={styles.normal}>20. 00000987</div>
-                        </div>
-                        <div className={styles.modalbody}>
-                            <div className={styles.reassets}>
-                                <div className={styles.image}>
-                                    <Image src={DAI} alt="DAI" width={41} height={41} />
-                                </div>
-                                <div className={styles.title}>Bitcoin</div>
-                            </div>
-                            <div className={styles.normal}>10. 00000987</div>
-                        </div>
-                        <div className={styles.resultmodalfooter}>
-                            <div className={styles.normal}>Total</div>
-                            <div className={styles.normal}>$30.56</div>
-                        </div>
+                    {
+                        depositedReserves.map((item,i)=>{
+                            return <div className={styles.modalbody}>
+                                        <div className={styles.reassets}>
+                                            <div className={styles.image}>
+                                                <Image src={DAI} alt={item.symbol} width={41} height={41} />
+                                            </div>
+                                            <div className={styles.title}>{item.symbol}</div>
+                                        </div>
+                                        <div className={styles.normal}>{item.balance.toFixed(4)}</div>
+                                    </div>
+                        })
+                    }                
                     </div>
                 </div>
             </div>

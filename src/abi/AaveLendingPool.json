@@ -59,16 +59,22 @@
             },
             {
                 "indexed": false,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            },            
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
             {
                 "indexed": true,
                 "internalType": "address",
                 "name": "onBehalfOf",
                 "type": "address"
-            },            
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            },
             {
                 "indexed": true,
                 "internalType": "uint16",

@@ -13,6 +13,8 @@ const AppLayout = (props) => {
   const router = useRouter();
   const [flag, setFlag] = React.useState(false);
 
+  
+
   useEffect(() => {
     if (router.route.split("/")[1] === "enz") setFlag(true);
     else setFlag(false);

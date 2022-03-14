@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -7,13 +7,46 @@ import DAI from '../../assets/dai.png'
 import Divide from '../../assets/divide3.png'
 import Search from '../../assets/search.png'
 import Down from '../../assets/down.png'
+import KovanAssets from '../../constants/kovan.json';
 
 import data from './data.json'
 
 import styles from './share.module.css'
+import { getAddresses } from '../../constants'
+import { changeBorrowable } from '../../store/slices/reserves-slice'
+import { useStandardContract } from '../../hooks/useContract'
+import { useDispatch } from 'react-redux'
 
 const CBorrow = () => {
+    const [borrowableList, setBrrowableList] = useState([]);
+    const dispatch = useDispatch();
     const router = useRouter();
+    const contractAddress = getAddresses();
+
+    useEffect(async()=>{
+        let brrowable = [];
+        await KovanAssets.proto.forEach(async(v,i)=>{
+            const ct=useStandardContract(v.address);
+            console.log('-');
+            
+            await ct.methods.balanceOf(contractAddress.LENDINGPOOL_ADDRESS).call().then((value) => {
+                console.log(value/Math.pow(10,v.decimals));
+                const balance = (value/Math.pow(10,v.decimals));    
+                if(balance>0){
+                    brrowable =[...brrowable, {address:v.address, decimal:v.decimals, symbol:v.symbol, balance:balance}];        
+                }
+                
+            });                
+
+            if(i===KovanAssets.proto.length-1){
+                console.log(brrowable);
+                setBrrowableList(brrowable);
+                dispatch(changeBorrowable(brrowable));
+            }                                
+            
+        })
+        console.log(brrowable);         
+    },[])
 
     return (
         <div className={styles.cborrow}>
@@ -60,16 +93,16 @@ const CBorrow = () => {
                         </div>
                         <div className={styles.tablebody}>
                             {
-                                data.map((item, index) => (
+                                borrowableList.map((item, index) => (
                                     <div className={styles.tr} key={index} onClick={() => router.push('/borrow')}>
                                         <div className={styles.assets}>
                                             <div className={styles.image}>
-                                                <Image src={DAI} alt="DAI" width={41} height={41} />
+                                                <Image src={DAI} alt={item.symbol} width={41} height={41} />
                                             </div>
-                                            <div className={styles.title}>{item.assets}</div>
+                                            <div className={styles.title}>{item.symbol}</div>
                                         </div>
-                                        <div className={styles.ballance}>{item.borrow}</div>
-                                        <div className={styles.rate}>{item.commission}</div>
+                                        <div className={styles.ballance}>{item.balance.toFixed(2)}</div>
+                                        <div className={styles.rate}>{}</div>
                                     </div>
                                 ))
                             }

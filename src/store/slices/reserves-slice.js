@@ -5,6 +5,10 @@ export const reservesSlice = createSlice({
   initialState: {
     reserves: [],
     balances:[],
+    deposited:[],
+    reserveData:[],
+    borrowable:[],
+    borrowed:[],
     currentReserve:''
   },
   reducers: {
@@ -15,8 +19,22 @@ export const reservesSlice = createSlice({
     changeBalances:(state, action) =>{
       state.balances = action.payload
     },
+    changeDeposited:(state, action) =>{
+      state.deposited = action.payload
+    },
     changeCurrentReserve:(state, action) =>{
       state.currentReserve = action.payload
+    },
+    changeReserveData:(state, action) =>{
+      state.reserveData = action.payload
+    },
+
+    changeBorrowable:(state, action) =>{
+      state.borrowable = action.payload
+    },
+
+    changeBorrowed:(state, action) =>{
+      state.borrowed = action.payload
     }
   },
 })
@@ -25,5 +43,9 @@ export const reservesSlice = createSlice({
 export const {  changeReserves } = reservesSlice.actions
 export const {  changeBalances } = reservesSlice.actions
 export const {  changeCurrentReserve } = reservesSlice.actions
+export const {  changeReserveData } = reservesSlice.actions
+export const {  changeDeposited } = reservesSlice.actions
+export const {  changeBorrowable } = reservesSlice.actions
+export const {  changeBorrowed } = reservesSlice.actions
 
 export default reservesSlice.reducer
