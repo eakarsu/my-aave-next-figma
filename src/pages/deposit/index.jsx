@@ -25,28 +25,40 @@ const Deposit = () => {
     const balances =  useSelector((state)=>state.reserves.balances);
     const deposited =  useSelector((state)=>state.reserves.deposited);
     const reserveData = useSelector((state)=>state.reserves.reserveData);
+    const pricesETH = useSelector((state)=>state.reserves.pricesETH);
 
     const [isApproved, setApprove] = useState(false);
 
     const lpContract =  useLendingPoolContract();
 
     const [info, setInfo] = useState(null);
-    const [amount, setAmount] = React.useState(0);
+    const [price, setPrice] = useState(0);
+    const [amount, setAmount] = useState(0);
 
     useEffect(() => {
         if(currentReserve == ''){
             router.push('/continue/cdeposit');
         }
         const idx = balances.findIndex(d=>d.address == currentReserve);
-        console.log(idx);
         if(idx !==-1){
             setInfo(balances[idx]);
-            console.log(info);
         }
-        console.log(currentReserve);
+        
     }, [currentReserve]);
     
-
+    useEffect(()=>{
+        const getPrice = () => {
+            const data =  pricesETH.find((d)=>d.address == currentReserve);
+            if(data != null){
+                const p = data.price/Math.pow(10, 18);
+                console.log(p); 
+                setPrice(p);
+                
+            }
+            
+        };
+        getPrice();
+    },[pricesETH])
 
     const isAllowance = async() =>{
         if(!info)
@@ -95,6 +107,8 @@ const Deposit = () => {
         return 0;
     }
 
+    
+
     return (
         <>
             <div className={styles.header}>
@@ -136,7 +150,7 @@ const Deposit = () => {
                             <div className={styles.mgroup1}>
                                 <div className={styles.price}>Asset price</div>
                                 <div className={styles.price}>
-                                    <b>$1.01</b> USD
+                                    <b>{price.toFixed(5)}</b> ETH
                                 </div>
                             </div>
                             <div className={styles.mgroup2}>

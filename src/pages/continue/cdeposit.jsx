@@ -8,103 +8,40 @@ import Divide from '../../assets/divide3.png'
 import Search from '../../assets/search.png'
 import Down from '../../assets/down.png'
 
-import data from './data.json'
-
 import styles from './share.module.css'
 
 import { useWeb3Context } from '../../hooks/web3/web3-context';
-import { useATokenContract, useDataProviderContract, useStandardContract } from "../../hooks/useContract";
-import {changeReserves, changeBalances, changeCurrentReserve, changeReserveData, changeDeposited} from "../../store/slices/reserves-slice";
-import KovanAssets from '../../constants/kovan.json';
+import { changeCurrentReserve} from "../../store/slices/reserves-slice";
 import { useDataProvider } from '../../hooks/useDataProvider';
 
 const CDeposit = () => {
     const router = useRouter()
     const {address} =  useWeb3Context();
     const reserveData = useSelector((state)=>state.reserves.reserveData);
-    const [availableReserves, setAReserves] =  useState([]);
-    const [depositedReserves, setDReserves] = useState([]);
+    const deposited = useSelector((state)=>state.reserves.deposited);
+    const balances = useSelector((state)=>state.reserves.balances);
 
-    const dpContract = useDataProviderContract();
-    const {initialReserveData} = useDataProvider();
+    const {initialReserveData, initialDepositedBalance, initialBalance, initialReservePriceETH} = useDataProvider();
     const dispatch = useDispatch();
 
     useEffect(async()=>{
         if(address){
-            let balances = [];
-            await KovanAssets.proto.forEach(async(v,i)=>{
-                const ct=useStandardContract(v.address);
-                console.log('-');
-                
-                await ct.methods.balanceOf(address).call().then((value) => {
-                    console.log(value/Math.pow(10,v.decimals));
-                    const balance = (value/Math.pow(10,v.decimals));    
-                    if(balance>0){
-                        balances =[...balances, {address:v.address, decimal:v.decimals, symbol:v.symbol, balance:balance}];        
-                    }
-                    
-                });                
-
-                if(i===KovanAssets.proto.length-1){
-                    console.log(balances);
-                    setAReserves(balances);
-                    dispatch(changeBalances(balances));
-                }                                
-                
-            })
-            console.log(balances);
-        }                
-        
+            initialBalance(address);
+            initialDepositedBalance(address);
+        }                        
     },[address])
-
-    useEffect(async()=>{
-        if(address){
-            let balances = [];
-            console.log('--------deposited tokens');
-            await KovanAssets.proto.forEach(async(v,i)=>{
-                const ct=useATokenContract(v.aTokenAddress);
-                console.log('-');
-                
-                await ct.methods.balanceOf(address).call().then((value) => {
-                    console.log(value/Math.pow(10,v.decimals));
-                    const balance = (value/Math.pow(10,v.decimals));    
-                    if(balance>0){
-                        balances = [...balances,{address:v.address,aTokenAddress:v.aTokenAddress, decimal:v.decimals, symbol:v.symbol, balance:balance}];        
-                    }
-                    
-                });                
-
-                if(i===KovanAssets.proto.length-1){
-                    console.log(balances);
-                    setDReserves(balances);
-                    console.log('deposited',depositedReserves);
-                    dispatch(changeDeposited(balances));
-                }
-                
-                
-                
-            })
-            console.log(balances);
-        }                
-        
-    },[address])
-
     
     useEffect(()=>{
-        console.log('dfdfdsfadfasfas');
         initialReserveData();
+        initialReservePriceETH();
     },[])
 
-
     const getAPR = (asset) => {
-        // cls
         const data = reserveData.find((d)=>d.address == asset);
         if(data != null){
-            console.log(data);
             return data.liquidityRate/Math.pow(10,27);
         }
-        return 0;
-        
+        return 0;        
     }
 
     const setCurrentReserve = (address) => {
@@ -149,7 +86,7 @@ const CDeposit = () => {
                         </div>
                         <div className={styles.tablebody}>
                             {
-                                availableReserves.map((item, index) => (
+                                balances.map((item, index) => (
                                     <div className={styles.tr} key={index} onClick={() => {setCurrentReserve(item.address)}}>
                                         <div className={styles.assets}>
                                             <div className={styles.image}>
@@ -174,8 +111,8 @@ const CDeposit = () => {
                     </div>
                     <div className={styles.resultmodalbody}>
                     {
-                        depositedReserves.map((item,i)=>{
-                            return <div className={styles.modalbody}>
+                        deposited.map((item,i)=>{
+                            return <div key={i} className={styles.modalbody}>
                                         <div className={styles.reassets}>
                                             <div className={styles.image}>
                                                 <Image src={DAI} alt={item.symbol} width={41} height={41} />

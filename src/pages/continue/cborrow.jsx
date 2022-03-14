@@ -7,46 +7,51 @@ import DAI from '../../assets/dai.png'
 import Divide from '../../assets/divide3.png'
 import Search from '../../assets/search.png'
 import Down from '../../assets/down.png'
-import KovanAssets from '../../constants/kovan.json';
-
-import data from './data.json'
 
 import styles from './share.module.css'
-import { getAddresses } from '../../constants'
-import { changeBorrowable } from '../../store/slices/reserves-slice'
-import { useStandardContract } from '../../hooks/useContract'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useDataProvider } from '../../hooks/useDataProvider'
+import { changeCurrentReserve } from '../../store/slices/reserves-slice'
+import { useWeb3Context } from '../../hooks/web3/web3-context'
 
 const CBorrow = () => {
+
     const [borrowableList, setBrrowableList] = useState([]);
+    const router = useRouter()
+    const {address} =  useWeb3Context();
+    const reserveData = useSelector((state)=>state.reserves.reserveData);
+    const deposited = useSelector((state)=>state.reserves.deposited);
+    const balances = useSelector((state)=>state.reserves.balances);
+
+    const {initialReserveData, initialDepositedBalance, initialBalance, initialReservePriceETH} = useDataProvider();
     const dispatch = useDispatch();
-    const router = useRouter();
-    const contractAddress = getAddresses();
 
     useEffect(async()=>{
-        let brrowable = [];
-        await KovanAssets.proto.forEach(async(v,i)=>{
-            const ct=useStandardContract(v.address);
-            console.log('-');
-            
-            await ct.methods.balanceOf(contractAddress.LENDINGPOOL_ADDRESS).call().then((value) => {
-                console.log(value/Math.pow(10,v.decimals));
-                const balance = (value/Math.pow(10,v.decimals));    
-                if(balance>0){
-                    brrowable =[...brrowable, {address:v.address, decimal:v.decimals, symbol:v.symbol, balance:balance}];        
-                }
-                
-            });                
-
-            if(i===KovanAssets.proto.length-1){
-                console.log(brrowable);
-                setBrrowableList(brrowable);
-                dispatch(changeBorrowable(brrowable));
-            }                                
-            
-        })
-        console.log(brrowable);         
+        if(address){
+            initialBalance(address);
+            initialDepositedBalance(address);
+        }                        
+    },[address])
+    
+    useEffect(()=>{
+        console.log('-----');
+        initialReserveData();
+        initialReservePriceETH();
     },[])
+
+
+    const getAPR = (asset) => {
+        const data = reserveData.find((d)=>d.address == asset);
+        if(data != null){
+            return data.liquidityRate/Math.pow(10,27);
+        }
+        return 0;        
+    }
+
+    const setCurrentReserve = (address) => {
+        dispatch(changeCurrentReserve(address));
+        router.push(`/borrow`);
+    }
 
     return (
         <div className={styles.cborrow}>
