@@ -1,11 +1,16 @@
-import { useDispatch } from 'react-redux'
+import BigNumber from 'bignumber.js';
+import { useDispatch, useSelector } from 'react-redux'
 import KovanAssets from '../constants/kovan.json';
-import { changeBalances, changeBorrowed, changeDeposited, changePricesETH, changeReserveData } from '../store/slices/reserves-slice';
-import { useATokenContract, useDataProviderContract, usePriceOracleContract, useStandardContract } from './useContract';
+import { changeBalances, changeBorrowable, changeBorrowed, changeDeposited, changePricesETH, changeReserveData } from '../store/slices/reserves-slice';
+import { useATokenContract, useDataProviderContract, useLendingPoolContract, usePriceOracleContract, useStandardContract } from './useContract';
 
 export const useDataProvider = () => {
 
+    const pricesETH = useSelector((state)=>state.reserves.pricesETH);
+    const reserveData = useSelector((state)=>state.reserves.reserveData);
+
     const dispatch = useDispatch();
+    const lpContract = useLendingPoolContract();
     const dpContract = useDataProviderContract();
     const oracleContract =  usePriceOracleContract()
 
@@ -68,6 +73,27 @@ export const useDataProvider = () => {
         })
     }
 
+    const initialBorrowableBalance = async(address) => {
+        let borrowable = [];
+        await lpContract.methods.getUserAccountData(address).call().then((value)=>{
+            const availableBorrowsETH = value.availableBorrowsETH;
+            pricesETH.forEach((d,i)=>{
+                const availableAmount = availableBorrowsETH/d.price;
+                const availableLiquidity = reserveData[i]?.availableLiquidity||0;
+                const availableLqAmount = BigNumber(availableLiquidity)/Math.pow(10,d.decimal);
+                const minVal = Math.min(availableAmount, availableLqAmount);
+                if(minVal>0.01){
+                    borrowable = [...borrowable, {address:d.address, decimal:d.decimal, symbol:d.symbol, balance:minVal}]
+                }            
+                if(i === pricesETH.length-1){
+                    dispatch(changeBorrowable(borrowable));
+                    console.log(borrowable);
+                }
+            })
+            
+        })
+    }
+
     const initialBorrowedBalance = (address) => {
         let bBalances = [];
         KovanAssets.proto.forEach(async(v,i)=>{
@@ -87,5 +113,5 @@ export const useDataProvider = () => {
         })
     }
 
-    return {initialReserveData, initialDepositedBalance, initialBalance, initialReservePriceETH, initialBorrowedBalance};
+    return {initialReserveData, initialDepositedBalance, initialBalance, initialReservePriceETH, initialBorrowedBalance, initialBorrowableBalance};
 }

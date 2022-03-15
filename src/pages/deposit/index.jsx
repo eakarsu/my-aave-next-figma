@@ -12,9 +12,13 @@ import Minimize from "../../assets/minimize.png";
 import SmallD from "../../assets/smallD.png";
 import BigD from "../../assets/bigD.png";
 
+import { ToastContainer, toast } from 'material-react-toastify';
+import 'material-react-toastify/dist/ReactToastify.css';
+
 import { getAddresses } from "../../constants";
 import { useLendingPoolContract, useStandardContract, usePriceOracleContract } from "../../hooks/useContract";
 import { useWeb3Context } from "../../hooks/web3/web3-context";
+import { useDataProvider } from "../../hooks/useDataProvider";
 
 
 const Deposit = () => {
@@ -26,6 +30,8 @@ const Deposit = () => {
     const deposited =  useSelector((state)=>state.reserves.deposited);
     const reserveData = useSelector((state)=>state.reserves.reserveData);
     const pricesETH = useSelector((state)=>state.reserves.pricesETH);
+
+    const {initialReserveData, initialDepositedBalance, initialBalance, initialReservePriceETH} = useDataProvider();
 
     const [isApproved, setApprove] = useState(false);
 
@@ -60,6 +66,15 @@ const Deposit = () => {
         getPrice();
     },[pricesETH])
 
+
+    const updateInfo = async () =>{
+        initialReserveData();
+        initialReservePriceETH();
+        initialDepositedBalance(address);
+        await initialBalance(address);
+        
+    }
+
     const isAllowance = async() =>{
         if(!info)
             return false;
@@ -75,8 +90,9 @@ const Deposit = () => {
             const ct=useStandardContract(info.address);
             await ct.methods.approve(contractAddress.LENDINGPOOL_ADDRESS,new BigNumber(Number(info.balance)* Math.pow(10,info.decimal))).send({from: address});
             setApprove(true)
+            toast.success("Successfully Approved");
         }catch(err){
-            console.log('err--approve');
+            toast.error("Failed Approve");
         }
         
     }
@@ -85,12 +101,22 @@ const Deposit = () => {
         
         try{                        
             await lpContract.methods.deposit(info.address,new BigNumber(Number(amount)* Math.pow(10,info.decimal)) , address, 0).send({from: address});                            
+            toast.success("Successfully Deposited");
+            updateInfo();
         } catch(err){
-            console.log('error--------');
+            toast.error("Failed Deposit");
         }
         
     }
 
+    const getBalance = () => {
+        const idx = balances.findIndex(d=>d.address == currentReserve);
+        if(idx !==-1){
+            return balances[idx].balance.toFixed(4);
+        }
+
+        return 0;
+    } 
     const getDeposited = () =>{
         const data = deposited.find((d)=>d.address == currentReserve);
         if(data != null){
@@ -122,7 +148,7 @@ const Deposit = () => {
                     <div className={styles.group}>
                         <div className={styles.title}>Your wallet balance</div>
                         <div className={styles.amount}>
-                            <b>{info?.balance.toFixed(4)}</b> {info?.symbol}
+                            <b>{getBalance()}</b> {info?.symbol}
                         </div>
                     </div>
                 </div>
@@ -177,7 +203,7 @@ const Deposit = () => {
                         <div className={styles.labels}>
                             <div className={styles.label}>Available to Deposit</div>
                             <div className={styles.label}>
-                                <b>{info?.balance.toFixed(4)}</b> {info?.symbol}
+                                <b>{getBalance()}</b> {info?.symbol}
                             </div>
                         </div>
                         <div className={styles.values}>
@@ -205,7 +231,7 @@ const Deposit = () => {
                             <input
                                 type="range"
                                 in="1"
-                                max={info?.balance}
+                                max={getBalance()}
                                 className={styles.slider}
                                 onChange={(e) => setAmount(e.target.value)}
                                 value={amount}
@@ -228,6 +254,7 @@ const Deposit = () => {
                         }                                            
                     </div>
                 </div>
+                <ToastContainer />
             </div>
         </>
     );

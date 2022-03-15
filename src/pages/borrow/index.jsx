@@ -7,18 +7,26 @@ import styles from "./borrow.module.css";
 import Minimize from "../../assets/minimize.png";
 import SmallD from "../../assets/smallD.png";
 import BigD from "../../assets/bigD.png";
+
+import { ToastContainer, toast } from 'material-react-toastify';
+import 'material-react-toastify/dist/ReactToastify.css';
+
 import { useWeb3Context } from "../../hooks/web3";
 import { useSelector } from "react-redux";
 import { useLendingPoolContract } from "../../hooks/useContract";
 import BigNumber from "bignumber.js";
+import { useDataProvider } from "../../hooks/useDataProvider";
 
 const Borrow = () => {
     const router = useRouter();
     const {address} = useWeb3Context();
     const currentReserve = useSelector((state) => state.reserves.currentReserve);
+    const balances = useSelector((state)=>state.reserves.balances);
     const borrowable =  useSelector((state)=>state.reserves.borrowable);
     const borrowed =  useSelector((state)=>state.reserves.borrowed);
     const pricesETH = useSelector((state)=>state.reserves.pricesETH);
+
+    const {initialBorrowedBalance, initialBorrowableBalance} = useDataProvider();
 
     const lpContract =  useLendingPoolContract();
 
@@ -30,9 +38,9 @@ const Borrow = () => {
         if(currentReserve == ''){
             router.push('/continue/cborrow');
         }
-        const idx = borrowable.findIndex(d=>d.address == currentReserve);
+        const idx = balances.findIndex(d=>d.address == currentReserve);
         if(idx !==-1){
-            setInfo(borrowable[idx]);
+            setInfo(balances[idx]);
         }        
     }, [currentReserve]);
     
@@ -48,13 +56,29 @@ const Borrow = () => {
         getPrice();
     },[pricesETH])
 
+    const updateInfo = () =>{
+        initialBorrowedBalance(address);
+        initialBorrowableBalance(address);
+        
+    }
+
     const borrow = async() => {
         try{                        
             await lpContract.methods.borrow(info.address,new BigNumber(Number(amount)* Math.pow(10,info.decimal)) ,1, 0,address).send({from: address});                            
+            toast.success("Successfully Borrowed");
+            updateInfo();
         } catch(err){
-            console.log('error--------');
+            toast.error("Failed Borrow");
         }
         
+    }
+
+    const getBorrowable = () => {
+        const idx = borrowable.findIndex(d=>d.address == currentReserve);
+        if(idx !==-1){
+            return borrowable[idx].balance.toFixed(4);
+        }
+        return 0;
     }
 
     const getBorrowed = () =>{
@@ -82,7 +106,7 @@ const Borrow = () => {
                     <div className={styles.group}>
                         <div className={styles.title}>Total collateral</div>
                         <div className={styles.amount}>
-                            <b>{info?.balance.toFixed(4)}</b> {info?.symbol}
+                            <b>{getBorrowable()}</b> {info?.symbol}
                         </div>
                     </div>
                     <div className={styles.group}>
@@ -139,7 +163,7 @@ const Borrow = () => {
                         <div className={styles.labels}>
                             <div className={styles.label}>Available to borrow</div>
                             <div className={styles.label}>
-                                <b>{info?.balance.toFixed(4)}</b> {info?.symbol}
+                                <b>{getBorrowable()}</b> {info?.symbol}
                             </div>
                         </div>
                         <div className={styles.values}>
@@ -167,7 +191,7 @@ const Borrow = () => {
                             <input
                                 type="range"
                                 in="1"
-                                max={info?.balance}
+                                max={getBorrowable()}
                                 className={styles.slider}
                                 onChange={(e) => setAmount(e.target.value)}
                                 value={amount}
@@ -180,6 +204,7 @@ const Borrow = () => {
                         </button>
                     </div>
                 </div>
+                <ToastContainer />
             </div>
         </>
     );
