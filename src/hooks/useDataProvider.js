@@ -73,8 +73,10 @@ export const useDataProvider = () => {
         KovanAssets.proto.forEach(async(v,i)=>{
             
             await dpContract.methods.getUserReserveData(v.address, address).call().then((data) => {
-                const balance = (data.currentStableDebt+data.currentVariableDebt)/Math.pow(10, v.decimals);    
+                const balance = (Number(data.currentStableDebt)+Number(data.currentVariableDebt))/Math.pow(10, v.decimals);    
+                
                 if(balance>0){
+                    console.log(v.decimals);
                     bBalances = [...bBalances,{address:v.address,aTokenAddress:v.aTokenAddress, decimal:v.decimals, symbol:v.symbol, balance:balance}];        
                 }
                 

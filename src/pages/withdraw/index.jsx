@@ -7,11 +7,68 @@ import styles from "./withdraw.module.css";
 import Info from "../../assets/info.png";
 import BigD from "../../assets/bigD.png";
 import Back from "../../assets/back.png";
+import { getAddresses } from "../../constants";
+import { useWeb3Context } from "../../hooks/web3/web3-context";
+import { useSelector } from "react-redux";
+import { useLendingPoolContract } from "../../hooks/useContract";
+import BigNumber from "bignumber.js";
 
 const WithDraw = () => {
-  const router = useRouter();
 
-  const [dai, setDAI] = useState(0.0000000000022287665);
+  const router = useRouter();
+  const contractAddress = getAddresses();
+  const {address} = useWeb3Context();
+  const currentReserve = useSelector((state) => state.reserves.currentReserve);
+  const balances =  useSelector((state)=>state.reserves.balances);
+  const deposited =  useSelector((state)=>state.reserves.deposited);
+  const pricesETH = useSelector((state)=>state.reserves.pricesETH);
+  
+  const [info, setInfo] = useState(null);
+  const [price, setPrice] = useState(0);
+  const [amount, setAmount] = useState(0);
+
+  const lpContract =  useLendingPoolContract();
+
+  useEffect(() => {
+    if(currentReserve == ''){
+        router.push('/mydashboard');
+    }
+
+    const idx = balances.findIndex(d=>d.address == currentReserve);
+    if(idx !==-1){
+        setInfo(balances[idx]);
+    }
+    
+  }, [currentReserve]);
+
+  useEffect(()=>{
+    const getPrice = () => {
+        const data =  pricesETH.find((d)=>d.address == currentReserve);
+        if(data != null){
+            const p = data.price/Math.pow(10, 18);
+            const tPrice = p * getDeposited(); 
+            setPrice(tPrice);            
+        }        
+    };
+    getPrice();
+  },[pricesETH])
+
+
+  const getDeposited = () =>{
+    const data = deposited.find((d)=>d.address == currentReserve);
+    if(data != null){
+        return data.balance.toFixed(4);
+    }
+    return 0;
+}
+
+  const withdraw  = async() => { 
+    try{                        
+      await lpContract.methods.withdraw(info.address,new BigNumber(Number(amount)* Math.pow(10,info.decimal)),address).send({from: address});                            
+    } catch(err){
+        console.log('error--------');
+    }
+  }
 
 
   return (
@@ -24,7 +81,7 @@ const WithDraw = () => {
           </div>
           <div className={styles.modal}>
             <div className={styles.modaltitle}>
-              <div>Withdraw DAI</div>
+              <div>Withdraw {info?.symbol}</div>
             </div>
             <div className={styles.modalborder}></div>
             <div className={styles.modalcontent}>
@@ -32,9 +89,9 @@ const WithDraw = () => {
                 <div className={styles.price}>Your balance Properity</div>
                 <div className={styles.price}>
                   <div>
-                    <b>10.0003</b> DAI
+                    <b>{getDeposited()}</b> {info?.symbol}
                   </div>
-                  <div className={styles.underdollar}>$40.04</div>
+                  <div className={styles.underdollar}>{price.toFixed(4)} ETH</div>
                 </div>
               </div>
               <div className={styles.row2}>
@@ -62,7 +119,7 @@ const WithDraw = () => {
             <div className={styles.labels}>
               <div className={styles.label}>Available to withdraw</div>
               <div className={styles.label}>
-                <b>0.000001</b> DAI
+                <b>{info?.balance}</b> {info?.symbol}
               </div>
             </div>
             <div className={styles.values}>
@@ -74,8 +131,8 @@ const WithDraw = () => {
                   <input
                     type="text"
                     className={styles.input}
-                    value={dai}
-                    onChange={(e) => setDAI(e.target.value)}
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
                   />
                 </div>
               </div>

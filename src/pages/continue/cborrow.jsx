@@ -80,9 +80,7 @@ const CBorrow = () => {
                 return data.stableBorrowRate/Math.pow(10,27);
             }else{
                 return data.variableBorrowRate/Math.pow(10,27);
-            }
-            
-            
+            }            
         }
         return 0;        
     }
