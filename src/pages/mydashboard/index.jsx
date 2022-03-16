@@ -12,7 +12,6 @@ import DAI from "../../assets/dai.png";
 import { useDispatch, useSelector } from "react-redux";
 import { useDataProvider } from "../../hooks/useDataProvider";
 import { useWeb3Context } from "../../hooks/web3/web3-context";
-import { getProviderInfoByCheck } from "web3modal";
 import { useLendingPoolContract } from "../../hooks/useContract";
 import { changeCurrentReserve } from "../../store/slices/reserves-slice";
 

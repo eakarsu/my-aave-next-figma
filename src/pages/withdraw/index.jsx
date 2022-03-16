@@ -7,22 +7,31 @@ import styles from "./withdraw.module.css";
 import Info from "../../assets/info.png";
 import BigD from "../../assets/bigD.png";
 import Back from "../../assets/back.png";
+
+import { ToastContainer, toast } from 'material-react-toastify';
+import 'material-react-toastify/dist/ReactToastify.css';
+
 import { getAddresses } from "../../constants";
 import { useWeb3Context } from "../../hooks/web3/web3-context";
 import { useSelector } from "react-redux";
 import { useLendingPoolContract } from "../../hooks/useContract";
 import BigNumber from "bignumber.js";
+import { useDataProvider } from "../../hooks/useDataProvider";
 
 const WithDraw = () => {
 
   const router = useRouter();
   const contractAddress = getAddresses();
   const {address} = useWeb3Context();
+  
   const currentReserve = useSelector((state) => state.reserves.currentReserve);
+  const reserveData =  useSelector((state)=>state.reserves.reserveData);
   const balances =  useSelector((state)=>state.reserves.balances);
   const deposited =  useSelector((state)=>state.reserves.deposited);
   const pricesETH = useSelector((state)=>state.reserves.pricesETH);
   
+  const {initialReserveData, initialDepositedBalance} = useDataProvider();
+
   const [info, setInfo] = useState(null);
   const [price, setPrice] = useState(0);
   const [amount, setAmount] = useState(0);
@@ -54,19 +63,37 @@ const WithDraw = () => {
   },[pricesETH])
 
 
+  const updateInfo = () =>{
+    initialReserveData();
+    initialDepositedBalance(address);
+  }
   const getDeposited = () =>{
     const data = deposited.find((d)=>d.address == currentReserve);
     if(data != null){
-        return data.balance.toFixed(4);
+        return data.balance;
     }
     return 0;
-}
+  }
+
+  const getAWAmount = () => {
+    const idx =  reserveData.findIndex(d=>d.address == currentReserve);
+    console.log(idx);
+    if(idx!=-1&&info){
+      const availableLiquidity = reserveData[idx]?.availableLiquidity||0;
+      const minVal = Math.min(getDeposited(), (availableLiquidity/Math.pow(10, info.decimal)));
+      return minVal;
+    }
+    return 0;
+    
+  }
 
   const withdraw  = async() => { 
     try{                        
       await lpContract.methods.withdraw(info.address,new BigNumber(Number(amount)* Math.pow(10,info.decimal)),address).send({from: address});                            
+      toast.success("Successfully Withdrawed");
+      updateInfo();
     } catch(err){
-        console.log('error--------');
+      toast.error(err);
     }
   }
 
@@ -89,7 +116,7 @@ const WithDraw = () => {
                 <div className={styles.price}>Your balance Properity</div>
                 <div className={styles.price}>
                   <div>
-                    <b>{getDeposited()}</b> {info?.symbol}
+                    <b>{getDeposited().toFixed(4)}</b> {info?.symbol}
                   </div>
                   <div className={styles.underdollar}>{price.toFixed(4)} ETH</div>
                 </div>
@@ -119,7 +146,7 @@ const WithDraw = () => {
             <div className={styles.labels}>
               <div className={styles.label}>Available to withdraw</div>
               <div className={styles.label}>
-                <b>{info?.balance}</b> {info?.symbol}
+                <b>{getAWAmount().toFixed(4)}</b> {info?.symbol}
               </div>
             </div>
             <div className={styles.values}>
@@ -138,14 +165,30 @@ const WithDraw = () => {
               </div>
               <div className={styles.max}>Max</div>
             </div>
-            <div
-              className={styles.continue}
-              onClick={() => router.push("/withdraw/continue")}
-            >
-              Continue
+            <div className={styles.slidercontainer}>
+                <div className={styles.sliderlabels}>
+                    <div className={styles.safer}>Safer</div>
+                    <div className={styles.ghost}>New health factor 2.04</div>
+                    <div className={styles.risker}>Risker</div>
+                </div>
+                <input
+                    type="range"
+                    in="1"
+                    max={getAWAmount()}
+                    className={styles.slider}
+                    onChange={(e) => setAmount(e.target.value)}
+                    value={amount}
+                />
             </div>
+            <button
+              className={styles.continue}
+              onClick={() => withdraw()}
+            >
+              Withdraw
+            </button>
           </div>
         </div>
+        <ToastContainer />
       </div>
     </>
   );
