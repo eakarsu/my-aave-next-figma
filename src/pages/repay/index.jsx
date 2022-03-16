@@ -8,10 +8,109 @@ import Info from "../../assets/info.png";
 import BigD from "../../assets/bigD.png";
 import Back from "../../assets/back.png";
 
+import { ToastContainer, toast } from 'material-react-toastify';
+import 'material-react-toastify/dist/ReactToastify.css';
+
+import { useSelector } from "react-redux";
+import { useDataProvider } from "../../hooks/useDataProvider";
+import { useLendingPoolContract, useStandardContract } from "../../hooks/useContract";
+import { useWeb3Context } from "../../hooks/web3/web3-context";
+import BigNumber from "bignumber.js";
+import { getAddresses } from "../../constants";
+
 const Repay = () => {
   const router = useRouter();
 
-  const [dai, setDAI] = useState(0.0000000000022287665);
+  const contractAddress = getAddresses();
+  const {address} = useWeb3Context();
+
+  const currentReserve = useSelector((state) => state.reserves.currentReserve);
+  const balances =  useSelector((state)=>state.reserves.balances);
+  const borrowed =  useSelector((state)=>state.reserves.borrowed);
+  const pricesETH = useSelector((state)=>state.reserves.pricesETH);
+
+  const {initialBalance, initialBorrowedBalance} = useDataProvider();
+
+  const lpContract =  useLendingPoolContract();
+
+  const [isApproved, setApprove] = useState(false);
+  const [info, setInfo] = useState(null);
+  const [amount, setAmount] = useState(0);
+
+  useEffect(() => {
+    if(currentReserve == ''){
+        router.push('/mydashboard');
+    }
+
+    const idx = balances.findIndex(d=>d.address == currentReserve);
+    if(idx !==-1){
+        setInfo(balances[idx]);
+    }
+    
+  }, [currentReserve]);
+
+
+  const updateInfo = () =>{
+    initialBalance(address);
+    initialBorrowedBalance(address);
+  }
+
+  const calcPrice=(asset, amount)=>{
+    const data =  pricesETH.find((d)=>d.address == asset);
+    if(data != null){
+        const p = data.price/Math.pow(10, 18);
+        const tPrice = p*amount;
+        return tPrice;
+    }
+    return 0;
+  }
+
+  const getBorrowed = () =>{
+    const data = borrowed.find((d)=>d.address == currentReserve);
+    if(data != null){
+        return data.balance.toFixed(4);
+    }
+    return 0;
+  }
+
+  const getBalance = () =>{
+    const data = balances.find((d)=>d.address == currentReserve);
+    if(data != null){
+        return data.balance.toFixed(4);
+    }
+    return 0;
+  }
+
+  const getARAmount = () =>{
+    if(info){
+      const minVal = Math.min(getBorrowed(), getBalance());
+      return minVal;
+    }
+    return 0;
+    
+  }
+
+  const approve = async() =>{
+    try{
+        const ct=useStandardContract(info.address);
+        await ct.methods.approve(contractAddress.LENDINGPOOL_ADDRESS,new BigNumber(Number(amount)* Math.pow(10,info.decimal))).send({from: address});
+        setApprove(true)
+        toast.success("Successfully Approved");
+    }catch(err){
+        toast.error("Failed Approve");
+    }
+    
+  }
+
+  const repay = async() =>{
+    try{                        
+      await lpContract.methods.repay(info.address,new BigNumber(Number(amount)* Math.pow(10,info.decimal)),1, address).send({from: address});                            
+      toast.success("Successfully Repaied");
+      updateInfo();
+    } catch(err){
+      toast.error("Failed Repay");
+    }
+  }
 
 
   return (
@@ -24,7 +123,7 @@ const Repay = () => {
           </div>
           <div className={styles.modal}>
             <div className={styles.modaltitle}>
-              <div>Repay DAI</div>
+              <div>Repay {info?.symbol}</div>
             </div>
             <div className={styles.modalborder}></div>
             <div className={styles.modalcontent}>
@@ -33,29 +132,20 @@ const Repay = () => {
                   <div className={styles.price}>You borrowed</div>
                   <div className={styles.price}>
                     <div>
-                      <b>10.0003</b> DAI
+                      <b>{getBorrowed()}</b> {info?.symbol}
                     </div>
-                    <div className={styles.underdollar}>$20.04</div>
-                  </div>
-                </div>
-                <div className={styles.row1}>
-                  <div className={styles.price}>Wallet ballance</div>
-                  <div className={styles.price}>
-                    <div>
-                      <b>10.0003</b> DAI
-                    </div>
-                    <div className={styles.underdollar}>$40.04</div>
+                    <div className={styles.underdollar}>{info?calcPrice(info.address, getBorrowed()).toFixed(4):""} ETH</div>
                   </div>
                 </div>
               </div>
               <div className={styles.mgroup1}>
                 <div className={styles.row1}>
-                  <div className={styles.price}>You borrowed</div>
+                  <div className={styles.price}>Wallet Balance</div>
                   <div className={styles.price}>
                     <div className={styles.onlyright}>
-                      <b>85.93</b> USD
+                      <b>{getBalance()}</b> {info?.symbol}
                     </div>
-                    <div className={styles.underdollar}>0.01267836482546235 ETH</div>
+                    <div className={styles.underdollar}>{info?calcPrice(info.address, getBalance()).toFixed(4):""}  ETH</div>
                   </div>
                 </div>
                 <div className={styles.row2}>
@@ -87,7 +177,7 @@ const Repay = () => {
             <div className={styles.labels}>
               <div className={styles.label}>Available to repay</div>
               <div className={styles.label}>
-                <b>10</b> DAI
+                <b>{getARAmount()}</b> {info?.symbol}
               </div>
             </div>
             <div className={styles.values}>
@@ -99,18 +189,43 @@ const Repay = () => {
                   <input
                     type="text"
                     className={styles.input}
-                    value={dai}
-                    onChange={(e) => setDAI(e.target.value)}
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
                   />
                 </div>
               </div>
               <div className={styles.max}>Max</div>
             </div>
-            <div className={styles.continue}>
-              Continue
+            <div className={styles.slidercontainer}>
+                <div className={styles.sliderlabels}>
+                    
+                </div>
+                <input
+                    type="range"
+                    in="1"
+                    max={getARAmount()}
+                    className={styles.slider}
+                    onChange={(e) => setAmount(e.target.value)}
+                    value={amount}
+                />
             </div>
+            {
+                !isApproved?
+                <button
+                    className={styles.continue}
+                    onClick ={() => {approve()}}
+                >
+                    Approve
+                </button>:
+                <button
+                    className={styles.continue}
+                    onClick={() => repay()}>
+                    Repay
+                </button>
+            }            
           </div>
         </div>
+        <ToastContainer />
       </div>
     </>
   );

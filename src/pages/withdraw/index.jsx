@@ -167,9 +167,7 @@ const WithDraw = () => {
             </div>
             <div className={styles.slidercontainer}>
                 <div className={styles.sliderlabels}>
-                    <div className={styles.safer}>Safer</div>
-                    <div className={styles.ghost}>New health factor 2.04</div>
-                    <div className={styles.risker}>Risker</div>
+                    
                 </div>
                 <input
                     type="range"

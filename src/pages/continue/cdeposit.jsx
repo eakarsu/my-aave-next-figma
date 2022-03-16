@@ -39,7 +39,7 @@ const CDeposit = () => {
     const getAPR = (asset) => {
         const data = reserveData.find((d)=>d.address == asset);
         if(data != null){
-            return data.liquidityRate/Math.pow(10,27);
+            return data.liquidityRate/Math.pow(10,27)*100;
         }
         return 0;        
     }

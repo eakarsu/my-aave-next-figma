@@ -90,7 +90,7 @@ const MyDashboard = () => {
     const getAPRForDeposit = (asset) => {
         const data = reserveData.find((d)=>d.address == asset);
         if(data != null){
-            return data.liquidityRate/Math.pow(10,27);
+            return data.liquidityRate*100/Math.pow(10,27);
         }
         return 0;   
     }
