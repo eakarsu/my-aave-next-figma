@@ -5,6 +5,7 @@ export const reservesSlice = createSlice({
   initialState: {
     reserves: [],
     reserveData:[],
+    ltvData:[],
     pricesETH:[],
     balances:[],
     deposited:[],
@@ -19,6 +20,10 @@ export const reservesSlice = createSlice({
     
     changeReserveData:(state, action) =>{
       state.reserveData = action.payload
+    },
+
+    changeLtvData:(state, action)=>{
+      state.ltvData = action.payload
     },
     
     changePricesETH:(state, action) =>{
@@ -49,6 +54,7 @@ export const {  changeReserves } = reservesSlice.actions
 export const {  changeBalances } = reservesSlice.actions
 export const {  changeCurrentReserve } = reservesSlice.actions
 export const {  changeReserveData } = reservesSlice.actions
+export const {  changeLtvData } = reservesSlice.actions
 export const {  changeDeposited } = reservesSlice.actions
 export const {  changeBorrowable } = reservesSlice.actions
 export const {  changeBorrowed } = reservesSlice.actions

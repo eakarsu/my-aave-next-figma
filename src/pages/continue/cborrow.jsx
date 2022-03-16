@@ -26,7 +26,7 @@ const CBorrow = () => {
     const pricesETH = useSelector((state)=>state.reserves.pricesETH);
     const borrowed = useSelector((state)=>state.reserves.borrowed);
 
-    const {initialReserveData, initialBalance, initialReservePriceETH, initialBorrowedBalance} = useDataProvider();
+    const {initialReserveData, initialBalance, initialReservePriceETH, initialBorrowedBalance, initialLtvData} = useDataProvider();
     const dispatch = useDispatch();
 
     const lpContract = useLendingPoolContract();
@@ -39,8 +39,8 @@ const CBorrow = () => {
     },[address])
     
     useEffect(()=>{
-        console.log('-----');
         initialReserveData();
+        initialLtvData();
         initialReservePriceETH();
     },[])
 

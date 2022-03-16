@@ -26,6 +26,7 @@ const Repay = () => {
 
   const currentReserve = useSelector((state) => state.reserves.currentReserve);
   const balances =  useSelector((state)=>state.reserves.balances);
+  const ltvData =  useSelector((state)=>state.reserves.ltvData);
   const borrowed =  useSelector((state)=>state.reserves.borrowed);
   const pricesETH = useSelector((state)=>state.reserves.pricesETH);
 
@@ -162,7 +163,7 @@ const Repay = () => {
                     <div className={styles.price}>Loan to value</div>
                     <Image src={Info} alt="Info" width={20} height={20} />
                   </div>
-                  <div className={styles.price}><b>77.64</b>%</div>
+                  <div className={styles.price}><b>{76.69}</b>%</div>
                 </div>
               </div>
             </div>

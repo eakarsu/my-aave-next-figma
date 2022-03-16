@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux'
 import KovanAssets from '../constants/kovan.json';
-import { changeBalances, changeBorrowable, changeBorrowed, changeDeposited, changePricesETH, changeReserveData } from '../store/slices/reserves-slice';
+import { changeBalances, changeBorrowable, changeBorrowed, changeDeposited, changePricesETH, changeReserveData, changeLtvData } from '../store/slices/reserves-slice';
 import { useATokenContract, useDataProviderContract, useLendingPoolContract, usePriceOracleContract, useStandardContract } from './useContract';
 
 export const useDataProvider = () => {
@@ -22,6 +22,18 @@ export const useDataProvider = () => {
             });                
             if(i===KovanAssets.proto.length-1){
                 dispatch(changeReserveData(reserves));
+            }                                            
+        })
+    }
+
+    const initialLtvData = () => {
+        let ltvs = [];
+        KovanAssets.proto.forEach(async(v,i)=>{
+            await dpContract.methods.getReserveConfigurationData(v.address).call().then((value) => {
+                ltvs = [...ltvs, {address:v.address, ltv:value.ltv}];                                        
+            });                
+            if(i===KovanAssets.proto.length-1){
+                dispatch(changeLtvData(ltvs));
             }                                            
         })
     }
@@ -113,5 +125,5 @@ export const useDataProvider = () => {
         })
     }
 
-    return {initialReserveData, initialDepositedBalance, initialBalance, initialReservePriceETH, initialBorrowedBalance, initialBorrowableBalance};
+    return {initialReserveData, initialDepositedBalance, initialBalance, initialReservePriceETH, initialBorrowedBalance, initialBorrowableBalance, initialLtvData};
 }

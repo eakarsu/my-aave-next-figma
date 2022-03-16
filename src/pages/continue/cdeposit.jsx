@@ -21,7 +21,7 @@ const CDeposit = () => {
     const deposited = useSelector((state)=>state.reserves.deposited);
     const balances = useSelector((state)=>state.reserves.balances);
 
-    const {initialReserveData, initialDepositedBalance, initialBalance, initialReservePriceETH} = useDataProvider();
+    const {initialReserveData, initialDepositedBalance, initialBalance, initialReservePriceETH, initialLtvData} = useDataProvider();
     const dispatch = useDispatch();
 
     useEffect(async()=>{
@@ -33,7 +33,8 @@ const CDeposit = () => {
     
     useEffect(()=>{
         initialReserveData();
-        initialReservePriceETH();
+        initialLtvData();
+        initialReservePriceETH();        
     },[])
 
     const getAPR = (asset) => {

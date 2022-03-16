@@ -32,7 +32,7 @@ const MyDashboard = () => {
 
     const [overview, setOverview] = useState(null);
 
-    const {initialReserveData, initialBalance, initialReservePriceETH, initialDepositedBalance,  initialBorrowedBalance} = useDataProvider();
+    const {initialReserveData, initialBalance, initialReservePriceETH, initialDepositedBalance,  initialBorrowedBalance, initialLtvData} = useDataProvider();
     const dispatch = useDispatch();
 
     const lpContract = useLendingPoolContract();
@@ -47,6 +47,7 @@ const MyDashboard = () => {
     
     useEffect(()=>{
         initialReserveData();
+        initialLtvData();
         initialReservePriceETH();
     },[])
 

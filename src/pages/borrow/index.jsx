@@ -21,12 +21,14 @@ const Borrow = () => {
     const router = useRouter();
     const {address} = useWeb3Context();
     const currentReserve = useSelector((state) => state.reserves.currentReserve);
+    const reserveData =  useSelector((state)=>state.reserves.reserveData);
     const balances = useSelector((state)=>state.reserves.balances);
+    const ltvData =  useSelector((state)=>state.reserves.ltvData);
     const borrowable =  useSelector((state)=>state.reserves.borrowable);
     const borrowed =  useSelector((state)=>state.reserves.borrowed);
     const pricesETH = useSelector((state)=>state.reserves.pricesETH);
 
-    const {initialBorrowedBalance, initialBorrowableBalance} = useDataProvider();
+    const {initialReserveData,initialBorrowedBalance, initialBorrowableBalance} = useDataProvider();
 
     const lpContract =  useLendingPoolContract();
 
@@ -57,10 +59,13 @@ const Borrow = () => {
     },[pricesETH])
 
     const updateInfo = () =>{
+        initialReserveData();
         initialBorrowedBalance(address);
         initialBorrowableBalance(address);
         
     }
+
+    
 
     const borrow = async() => {
         try{                        
@@ -73,10 +78,20 @@ const Borrow = () => {
         
     }
 
+    const getLiquidity = () => {
+        const idx =  reserveData.findIndex(d=>d.address == currentReserve);
+        if(idx!=-1&&info){
+          const availableLiquidity = reserveData[idx]?.availableLiquidity/Math.pow(10, info.decimal)||0;
+          return availableLiquidity;
+        }
+        return 0;
+        
+    }
+
     const getBorrowable = () => {
         const idx = borrowable.findIndex(d=>d.address == currentReserve);
         if(idx !==-1){
-            return borrowable[idx].balance.toFixed(4);
+            return borrowable[idx].balance.toFixed(4)*getLtv()/100;
         }
         return 0;
     }
@@ -87,6 +102,10 @@ const Borrow = () => {
             return data.balance.toFixed(4);
         }
         return 0;
+    }
+
+    const getLtv = () => {
+        return 100;
     }
 
     const getAPR = () => {        
@@ -106,13 +125,13 @@ const Borrow = () => {
                     <div className={styles.group}>
                         <div className={styles.title}>Total collateral</div>
                         <div className={styles.amount}>
-                            <b>{getBorrowable()}</b> {info?.symbol}
+                            <b>{getLiquidity().toFixed(4)}</b> {info?.symbol}
                         </div>
                     </div>
                     <div className={styles.group}>
                         <div className={styles.title}>Loan to value</div>
                         <div className={styles.amount}>
-                            <b>78</b> %
+                            <b>{getLtv()}</b> %
                         </div>
                     </div>
                 </div>

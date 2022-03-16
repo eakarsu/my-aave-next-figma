@@ -26,6 +26,7 @@ const WithDraw = () => {
   
   const currentReserve = useSelector((state) => state.reserves.currentReserve);
   const reserveData =  useSelector((state)=>state.reserves.reserveData);
+  const ltvData =  useSelector((state)=>state.reserves.ltvData);
   const balances =  useSelector((state)=>state.reserves.balances);
   const deposited =  useSelector((state)=>state.reserves.deposited);
   const pricesETH = useSelector((state)=>state.reserves.pricesETH);
@@ -33,7 +34,7 @@ const WithDraw = () => {
   const {initialReserveData, initialDepositedBalance} = useDataProvider();
 
   const [info, setInfo] = useState(null);
-  const [price, setPrice] = useState(0);
+  const [delta, setDelta] = useState(0);
   const [amount, setAmount] = useState(0);
 
   const lpContract =  useLendingPoolContract();
@@ -50,23 +51,52 @@ const WithDraw = () => {
     
   }, [currentReserve]);
 
-  useEffect(()=>{
-    const getPrice = () => {
-        const data =  pricesETH.find((d)=>d.address == currentReserve);
-        if(data != null){
-            const p = data.price/Math.pow(10, 18);
-            const tPrice = p * getDeposited(); 
-            setPrice(tPrice);            
-        }        
-    };
-    getPrice();
-  },[pricesETH])
 
+  useEffect(()=>{
+    if(address){
+      loadDelta();
+    }
+  },[address])
+
+  const loadDelta = async() => {
+      await lpContract.methods.getUserAccountData(address).call().then((value)=>{
+        const dPercent = value.currentLiquidationThreshold - value.ltv;
+        let totalDebtETH = value.totalDebtETH/Math.pow(10,18);
+        totalDebtETH = totalDebtETH + totalDebtETH*dPercent/10000;
+        let totalCollateralETH = value.totalCollateralETH/Math.pow(10,18);            
+        totalCollateralETH = totalCollateralETH;
+        let delt =  totalCollateralETH - totalDebtETH;
+        
+        setDelta(delt);
+      });
+  }
 
   const updateInfo = () =>{
     initialReserveData();
     initialDepositedBalance(address);
+    loadDeta();
   }
+
+  const calcPrice=(asset, amount)=>{
+    const data =  pricesETH.find((d)=>d.address == asset);
+    if(data != null){
+        const p = data.price/Math.pow(10, 18);
+        const tPrice = p*amount;
+        return tPrice;
+    }
+    return 0;
+  }
+
+  const getNumberFromPrice = (tp) => {
+    const data =  pricesETH.find((d)=>d.address == currentReserve);
+    if(data != null){
+        const p = data.price/Math.pow(10, 18);
+        const tn = tp/p;
+        return tn;
+    }
+    return 0;
+  }
+
   const getDeposited = () =>{
     const data = deposited.find((d)=>d.address == currentReserve);
     if(data != null){
@@ -74,14 +104,36 @@ const WithDraw = () => {
     }
     return 0;
   }
+  
+  const getTPrice = () => {
+    if(getDeposited()!==0){
+      const tp = calcPrice(currentReserve, getDeposited());
+      return tp;
+    }
+    return 0;
+  }
+
+  const getLtv = () => {
+    return 76.69;
+  }
+
+  const getAssetLtv = () => {
+    const idx =  ltvData.findIndex(d=>d.address == currentReserve);
+    if(idx !== -1){
+      return ltvData[idx].ltv;
+    }
+    return 0;
+  }
 
   const getAWAmount = () => {
     const idx =  reserveData.findIndex(d=>d.address == currentReserve);
-    console.log(idx);
     if(idx!=-1&&info){
+      const minP = Math.min(getTPrice(), delta*getLtv()/100);
+      const tNumber = getNumberFromPrice(minP);
       const availableLiquidity = reserveData[idx]?.availableLiquidity||0;
-      const minVal = Math.min(getDeposited(), (availableLiquidity/Math.pow(10, info.decimal)));
-      return minVal;
+      const awVal = Math.min(tNumber, (availableLiquidity/Math.pow(10, info.decimal)));
+
+      return awVal;
     }
     return 0;
     
@@ -93,7 +145,7 @@ const WithDraw = () => {
       toast.success("Successfully Withdrawed");
       updateInfo();
     } catch(err){
-      toast.error(err);
+      toast.error("Failed Withdraw");
     }
   }
 
@@ -118,7 +170,7 @@ const WithDraw = () => {
                   <div>
                     <b>{getDeposited().toFixed(4)}</b> {info?.symbol}
                   </div>
-                  <div className={styles.underdollar}>{price.toFixed(4)} ETH</div>
+                  <div className={styles.underdollar}>{getTPrice().toFixed(4)} ETH</div>
                 </div>
               </div>
               <div className={styles.row2}>
@@ -126,7 +178,7 @@ const WithDraw = () => {
                   <div className={styles.price}>Loan to value</div>
                   <Image src={Info} alt="Info" width={20} height={20} />
                 </div>
-                <div className={styles.price}><b>78.99</b>%</div>
+                <div className={styles.price}><b>{getLtv()}</b>%</div>
               </div>
               <div className={styles.mgroup2}>
                 <div className={styles.price}>Collateral composition</div>
