@@ -66,6 +66,15 @@ const Borrow = () => {
     }
 
     
+    const getNumberFromPrice = (tp) => {
+        const data =  pricesETH.find((d)=>d.address == currentReserve);
+        if(data != null){
+            const p = data.price/Math.pow(10, 18);
+            const tn = tp/p;
+            return tn;
+        }
+        return 0;
+      }
 
     const borrow = async() => {
         try{                        
@@ -91,7 +100,8 @@ const Borrow = () => {
     const getBorrowable = () => {
         const idx = borrowable.findIndex(d=>d.address == currentReserve);
         if(idx !==-1){
-            return borrowable[idx].balance.toFixed(4)*getLtv()/100;
+            const minVal = Math.min(borrowable[idx].balance.toFixed(4), getLiquidity());
+            return minVal;
         }
         return 0;
     }
