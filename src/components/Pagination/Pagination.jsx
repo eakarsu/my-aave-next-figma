@@ -18,11 +18,12 @@ const Pagination = ({ data, rowsPerPage }) => {
     return (
         <div className={tstyles.tablepagination}>
             <div className={tstyles.container}>
+           
                 <div className={tstyles.table} id="table">
                     {/* table head */}
                     <div className={tstyles.thead}>
                         <div className={tstyles.hassets}>
-                            <div className={tstyles.htassets}>Assets</div>
+                            <div className={tstyles.htassets}>Asset</div>
                             <div className={tstyles.image}>
                                 <Image src={Down} alt="Down" width={11} height={6} />
                             </div>
@@ -34,19 +35,19 @@ const Pagination = ({ data, rowsPerPage }) => {
                             </div>
                         </div>
                         <div className={tstyles.htotal}>
-                            <div className={tstyles.httotal}>Total <br /> borrowed</div>
+                            <div className={tstyles.httotal}>Total borrowed</div>
                             <div className={tstyles.image}>
                                 <Image src={Down} alt="Down" width={11} height={6} />
                             </div>
                         </div>
                         <div className={tstyles.hcommission}>
-                            <div className={tstyles.htcommission}>Profit <br /> Commission <br /> Rate</div>
+                            <div className={tstyles.htcommission}>Borrow APY, Variable</div>
                             <div className={tstyles.image}>
                                 <Image src={Down} alt="Down" width={11} height={6} />
                             </div>
                         </div>
                         <div className={tstyles.hsharing}>
-                            <div className={tstyles.htsharing}>Profit <br /> Sharing <br /> Rate</div>
+                            <div className={tstyles.htsharing}>Borrow APY, Stable</div>
                             <div className={tstyles.image}>
                                 <Image src={Down} alt="Down" width={11} height={6} />
                             </div>

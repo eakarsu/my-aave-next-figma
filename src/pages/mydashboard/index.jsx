@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router"
 
+import {AiOutlineMinusCircle} from 'react-icons/ai';
 import ProgressBar from "progressbar.js";
 
 import styles from "./mydashboard.module.css";
@@ -9,6 +10,7 @@ import styles from "./mydashboard.module.css";
 import Minimize from "../../assets/minimize.png";
 import Info from "../../assets/info.png";
 import DAI from "../../assets/dai.png";
+import AAVE from "../../assets/aave.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { useDataProvider } from "../../hooks/useDataProvider";
 import { useWeb3Context } from "../../hooks/web3/web3-context";
@@ -52,7 +54,7 @@ const MyDashboard = () => {
     },[])
 
     useEffect(async()=>{
-        if(address){
+        if(address&&deposited.length>0){
             await lpContract.methods.getUserAccountData(address).call().then((value)=>{
                 const totalDebtETH = value.totalDebtETH/Math.pow(10,18);
                 const totalCollateralETH = value.totalCollateralETH/Math.pow(10,18);            
@@ -135,7 +137,7 @@ const MyDashboard = () => {
         cbar.text.style.fontFamily = "Poppins";
         cbar.text.style.fontSize = "10.5px";
         cbar.text.style.textAlign = "center";
-        cbar.text.style.color = "#4E5984";
+        cbar.text.style.color = "rgb(235 235 235)";
         cbar.animate(0.5); // Number from 0.0 to 1.0
 
         const cbar1 = new ProgressBar.Circle(container1, {
@@ -158,7 +160,7 @@ const MyDashboard = () => {
         cbar1.text.style.fontFamily = "Poppins";
         cbar1.text.style.fontSize = "10.5px";
         cbar1.text.style.textAlign = "center";
-        cbar1.text.style.color = "#4E5984";
+        cbar1.text.style.color = "rgb(235 235 235)";
         cbar1.animate(0.5); // Number from 0.0 to 1.0
         setBar(cbar);
         setBar1(cbar1);
@@ -179,20 +181,20 @@ const MyDashboard = () => {
         <div className={styles.mydashboard}>
             <div className={styles.container}>
                 <div className={styles.leftmodal}>
-                    <div className={styles.lheader}>Deposit information</div>
+                    <div className={styles.lheader}>Deposit Information</div>
                     <div className={styles.progress}>
                         <div className={styles.ptitle1}>
                             <div className={styles.item1}>
                                 <div>You collateral</div>
-                                <div>{overview?overview.totalDepositedETH.toFixed(4)+'ETH':'-'}</div>
+                                <div className={styles.overviewval}>{overview?overview.totalDepositedETH.toFixed(4)+'ETH':'-'}</div>
                             </div>
                             <div className={styles.item2}>
                                 <div>Collateral Powed Used</div>
-                                <div>{overview?overview.collateralUsed.toFixed(0)+'%':'-'}</div>
+                                <div className={styles.overviewval}>{overview?overview.collateralUsed.toFixed(0)+'%':'-'}</div>
                             </div>
                             <div className={styles.item3}>
                                 <div>Your deposited</div>
-                                <div>{overview?overview.totalCollateralETH.toFixed(4)+'ETH':'-'}</div>
+                                <div className={styles.overviewval}>{overview?overview.totalCollateralETH.toFixed(4)+'ETH':'-'}</div>
                             </div>                            
                         </div>
                         <div className={styles.progressgroup}>
@@ -201,12 +203,11 @@ const MyDashboard = () => {
                     </div>
                     <div className={styles.table}>
                         <div className={styles.thead}>
-                            <div className={styles.deposits}>Your <br /> deposits</div>
-                            <div className={styles.ballance} >Current <br /> ballance</div>
-                            <div className={styles.profit}>Profit <br /> Sharing <br /> Rate</div>
+                            <div className={styles.deposits}>Assets</div>
+                            <div className={styles.ballance} >Deposited</div>
+                            <div className={styles.profit}>APY</div>
                             <div className={styles.merge}>
                                 <div>Collateral</div>
-                                <Image src={Info} alt="Info" width={18} height={18} />
                             </div>
                             <div className={styles.bspace}></div>
                         </div>
@@ -215,7 +216,7 @@ const MyDashboard = () => {
                                 deposited.map((item,i)=>{
                                     return <div key={i} className={styles.child}>
                                                 <div className={styles.bdeposits}>
-                                                    <Image src={DAI} alt="DAI" width={30} height={30} />
+                                                    <Image src={`/./icon/${item.symbol}.svg`} alt={item.symbol} width={30} height={30} />
                                                     <div>{item.symbol}</div>
                                                 </div>
                                                 <div className={styles.bballance}>
@@ -252,25 +253,24 @@ const MyDashboard = () => {
                 {/* right modal */}
                 <div className={styles.rightmodal}>
                     <div className={styles.rheader}>
-                        <div className={styles.title}>Borrow information</div>
+                        <div className={styles.title}>Borrow Information</div>
                         <div className={styles.minimize}>
-                            <Image src={Minimize} alt="Minimize" width={19} height={19} />
-                            <div className={styles.hideminimize}>Minimize</div>
+                            <AiOutlineMinusCircle />
                         </div>
                     </div>
                     <div className={styles.progress}>
                         <div className={styles.ptitle1}>
                             <div className={styles.item1}>
                                 <div>You borrowed</div>
-                                <div>{overview?overview.totalDebtETH.toFixed(4)+'ETH':'-'}</div>
+                                <div className={styles.overviewval}>{overview?overview.totalDebtETH.toFixed(4)+'ETH':'-'}</div>
                             </div>
                             <div className={styles.item2}>
                                 <div>Borrowing Powed Used</div>
-                                <div>{overview?overview.borrowedUsed.toFixed(0)+'%':'-'}</div>
+                                <div className={styles.overviewval}>{overview?overview.borrowedUsed.toFixed(0)+'%':'-'}</div>
                             </div>
                             <div className={styles.item3}>
                                 <div>Your collateral</div>
-                                <div>{overview?overview.totalCollateralETH.toFixed(4)+'ETH':'-'}</div>
+                                <div className={styles.overviewval}>{overview?overview.totalCollateralETH.toFixed(4)+'ETH':'-'}</div>
                             </div>
                             <div className={styles.item4}>
                                 <div className={styles.btn}>Details</div>
@@ -282,9 +282,9 @@ const MyDashboard = () => {
                     </div>
                     <div className={styles.table}>
                         <div className={styles.thead}>
-                            <div className={styles.deposits}>Your <br /> borrows</div>
+                            <div className={styles.deposits}>Assets</div>
                             <div className={styles.ballance} >Borrowed</div>
-                            <div className={styles.profit}>Profit <br /> Commission <br /> Rate</div>
+                            <div className={styles.profit}>APY</div>
                             <div className={styles.merge}></div>
                             <div className={styles.bspace}></div>
                         </div>
@@ -293,7 +293,7 @@ const MyDashboard = () => {
                                 borrowed.map((item, index)=>{
                                     return <div key={index} className={styles.child}>
                                                 <div className={styles.bdeposits}>
-                                                    <Image src={DAI} alt="DAI" width={30} height={30} />
+                                                    <Image src={`/./icon/${item.symbol}.svg`} alt="DAI" width={30} height={30} />
                                                     <div>{item.symbol}</div>
                                                 </div>
                                                 <div className={styles.bballance}>

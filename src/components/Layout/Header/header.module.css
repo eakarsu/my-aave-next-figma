@@ -21,11 +21,11 @@
 .menu {
   display: flex;
   align-items: center;
-  grid-gap: 65px;
+  grid-gap: 35px;
   transition: 0.5s;
 }
 .menubar {
-  font-family: Poppins;
+  font-family: Inter;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;

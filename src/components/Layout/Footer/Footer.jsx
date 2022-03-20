@@ -5,15 +5,12 @@ import Image from 'next/image'
 import styles from './footer.module.css'
 
 // import images
-import Logo from '../../../assets/logoblue.png'
-import Facebook from '../../../assets/facebook.png'
-import O from '../../../assets/o.png'
-import Twitter from '../../../assets/twitter.png'
+import Logo from '../../../assets/logo.png'
+import {AiOutlineFacebook, AiOutlineMedium, AiOutlineTwitter} from "react-icons/ai"
 
 const Footer = () => {
     return (
-        <React.Fragment>
-            <div className={styles.border}></div>
+        <React.Fragment>    
             <div className={styles.footer}>
                 <div className={styles.container}>
                     <div className={styles.image}>
@@ -21,9 +18,9 @@ const Footer = () => {
                             <Image src={Logo} alt="Logo" layout='intrinsic' width={264} height={54} />
                         </div>
                         <div className={styles.social}>
-                            <Image src={Facebook} alt="FaceBook" layout='intrinsic' width={36} height={36} />
-                            <Image src={O} alt="O" layout='intrinsic' width={36} height={36} />
-                            <Image src={Twitter} alt="Twitter" layout='intrinsic' width={36} height={36} />
+                            <AiOutlineFacebook />
+                            <AiOutlineMedium />
+                            <AiOutlineTwitter />
                         </div>
                     </div>
                     <div className={styles.context}>

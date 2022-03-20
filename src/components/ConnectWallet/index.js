@@ -13,7 +13,7 @@ function ConnectWallet() {
     const { connect, disconnect, connected, web3, providerChainID, checkWrongNetwork, address } = useWeb3Context();
     const [isConnected, setConnected] = useState(connected);
 
-    let buttonText = "ConnectWallet";
+    let buttonText = "Connect Wallet";
     let clickFunc = connect;
     let buttonStyle = {};
 

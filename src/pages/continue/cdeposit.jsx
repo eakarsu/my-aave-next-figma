@@ -56,14 +56,14 @@ const CDeposit = () => {
                 <div className={styles.listmodal}>
                     <div className={styles.listmodalheader}>
                         <div className={styles.listmodalleft}>
-                            <div className={styles.normal}>Available to deposit</div>
+                            <div>Available to deposit</div>
                         </div>
                         <div className={styles.listmodalright}>
-                            <div className={styles.normalblue}>All</div>
+                            <div>All</div>
                             <div className={styles.normal}>
                                 <Image src={Divide} alt="Divide" width={1} height={25.5} />
                             </div>
-                            <div className={styles.normal}>Stable Coins</div>
+                            <div>Stable Coins</div>
                         </div>
                     </div>
                     <div className={styles.searchpart}>
@@ -77,12 +77,9 @@ const CDeposit = () => {
                     <div className={styles.table}>
                         <div className={styles.tableheader}>
                             <div className={styles.hasset}>Asset</div>
-                            <div className={styles.integrate1}>Your wallet balance</div>
+                            <div className={styles.integrate1}>Wallet balance</div>
                             <div className={styles.integrate}>
-                                <div className={styles.normal}>Profit Sharing Rate</div>
-                                <div className={styles.normal}>
-                                    <Image src={Down} alt="Down" width={10} height={5.71} />
-                                </div>
+                                <div className={styles.normal}>APY</div>
                             </div>
                         </div>
                         <div className={styles.tablebody}>
@@ -91,7 +88,7 @@ const CDeposit = () => {
                                     <div className={styles.tr} key={index} onClick={() => {setCurrentReserve(item.address)}}>
                                         <div className={styles.assets}>
                                             <div className={styles.image}>
-                                                <Image src={DAI} alt={item.symbol} width={41} height={41} />
+                                                <Image src={`/./icon/${item.symbol}.svg`} alt={item.symbol} width={41} height={41} />
                                             </div>
                                             <div className={styles.title}>{item.symbol}</div>
                                         </div>
@@ -108,7 +105,7 @@ const CDeposit = () => {
                 </div>
                 <div className={styles.resultmodal}>
                     <div className={styles.resultmodalheader}>
-                        <div className={styles.normal}>My deposits</div>
+                        <div>My deposits</div>
                     </div>
                     <div className={styles.resultmodalbody}>
                     {
@@ -116,7 +113,7 @@ const CDeposit = () => {
                             return <div key={i} className={styles.modalbody}>
                                         <div className={styles.reassets}>
                                             <div className={styles.image}>
-                                                <Image src={DAI} alt={item.symbol} width={41} height={41} />
+                                                <Image src={`/./icon/${item.symbol}.svg`} alt={item.symbol} width={41} height={41} />
                                             </div>
                                             <div className={styles.title}>{item.symbol}</div>
                                         </div>

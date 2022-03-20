@@ -126,11 +126,7 @@ const CBorrow = () => {
                                 </div>
                             </div>
                             <div className={styles.integrate}>
-                                <div className={styles.normal}>Profit<br />commi
-                                    sion<br />Rate</div>
-                                <div className={styles.normal}>
-                                    <Image src={Down} alt="Down" width={10} height={5.71} />
-                                </div>
+                                <div className={styles.normal}>APY</div>                    
                             </div>
                         </div>
                         <div className={styles.tablebody}>
@@ -139,7 +135,7 @@ const CBorrow = () => {
                                     <div className={styles.tr} key={index} onClick={() => setCurrentReserve(item.address)}>
                                         <div className={styles.assets}>
                                             <div className={styles.image}>
-                                                <Image src={DAI} alt={item.symbol} width={41} height={41} />
+                                                <Image src={`/./icon/${item.symbol}.svg`} alt={item.symbol} width={41} height={41} />
                                             </div>
                                             <div className={styles.title}>{item.symbol}</div>
                                         </div>
@@ -161,7 +157,7 @@ const CBorrow = () => {
                                 return <div key={i} className={styles.modalbody}>
                                             <div className={styles.reassets}>
                                                 <div className={styles.image}>
-                                                    <Image src={DAI} alt={item.symbol} width={41} height={41} />
+                                                    <Image src={`/./icon/${item.symbol}.svg`} alt={item.symbol} width={41} height={41} />
                                                 </div>
                                                 <div className={styles.title}>{item.symbol}</div>
                                             </div>

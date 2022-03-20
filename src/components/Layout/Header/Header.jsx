@@ -18,19 +18,19 @@ const Header = () => {
 
   const menuData = [
     {
-      title: "MY DASHBOARD",
+      title: "My Dashboard",
       path: "/mydashboard",
     },
     {
-      title: "MY FUND",
+      title: "My Fund",
       path: "/enz/overview",
     },
     {
-      title: "DEPOSIT",
+      title: "Deposit",
       path: "/continue/cdeposit",
     },
     {
-      title: "BORROW",
+      title: "Borrow",
       path: "/continue/cborrow",
     },
   ];
@@ -57,8 +57,8 @@ const Header = () => {
                 src={Logo}
                 alt="Logo"
                 layout="intrinsic"
-                width={264}
-                height={54}
+                width={600}
+                height={120}
               />
             </div>
             <div className={styles.menuicon} onClick={openNav}>

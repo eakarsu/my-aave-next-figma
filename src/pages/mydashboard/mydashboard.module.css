@@ -23,8 +23,9 @@
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
+  font-weight: bold;
   line-height: 21px;
-  color: #ffffff;
+  color: #87aafa;
   width: auto;
 }
 .rheader {
@@ -46,6 +47,13 @@
   width: 110px;
   height: 110px;
   position: relative;
+}
+
+.overviewval{
+  font-size: 15px;
+  font-weight: bold;
+  color: #ebecef;
+  line-height: 30px;
 }
 .normal,
 .size {
@@ -144,6 +152,7 @@
   font-weight: 500;
   font-size: 12px;
   line-height: 15px;
+  height: 55px;
   /* border-collapse: collapse; */
 }
 
@@ -160,21 +169,23 @@
   /* border-collapse: collapse; */
 }
 .child {
+  padding: 15px  0;
   display: flex;
   align-items: center;
   width: 100%;
+  height:40px;
   border-bottom: 1px solid #161e3f;
 }
 .thead div {
   padding: 10px;
   color: white;
-  text-align: center;
+  text-align: left;
   border: none;
 }
 .child div {
-  padding: 10px;
+  padding: 0 10px;
   color: white;
-  text-align: center;
+  justify-content: left;
 }
 .merge,
 .bdeposits {
@@ -191,7 +202,7 @@
   font-weight: normal;
   font-size: 12px;
   line-height: 15px;
-  color: #4e5984 !important;
+  color: #65bdfd !important;
 }
 .deposit {
   background: linear-gradient(65.4deg, #4e89fe 18.74%, #6ac7fc 88.33%);
@@ -205,6 +216,10 @@
   color: #ffffff;
   padding: 4px 18px;
   width: 50%;
+  height:25px;
+  display: flex;
+  align-items: center;
+  justify-content: center !important;
   cursor: pointer;
 }
 .withdraw {
@@ -219,6 +234,10 @@
   text-align: center;
   padding: 4px 18px;
   width: 50%;
+  height:25px;
+  display: flex;
+  align-items: center;
+  justify-content: center !important;
   cursor: pointer;
 }
 .bspace {

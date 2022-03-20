@@ -1,5 +1,6 @@
 .cdeposit,
 .cborrow {
+  padding-top: 66px;
   background: #222b52;
   padding-bottom: 62px;
 }
@@ -15,7 +16,7 @@
   justify-content: center;
   grid-gap: 18px;
   background-color: #353f68;
-  border-radius: 15px 15px 0px 0px;
+  border-radius: 15px 15px 15px 15px;
   width: 68%;
 }
 .listmodalheader {
@@ -26,6 +27,12 @@
   grid-gap: 27px;
   padding: 18px 20.5px 16px 27px;
   border-radius: 15px 15px 0px 0px;
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 21px;
+  color: #87aafa;
+  height: 25px;
 }
 .listmodalright {
   display: flex;
@@ -39,7 +46,8 @@
   font-family: Poppins;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: bold;
   line-height: 21px;
   color: #ffffff;
 }
@@ -83,6 +91,11 @@
   padding: 21px;
   display: flex;
   align-items: center;
+  font-size: 13px;
+  font-weight: bold;
+}
+.image{
+  width:28px;
 }
 .integrate {
   width: 120px;
@@ -152,10 +165,11 @@
 .title,
 .ballance,
 .rate {
-  font-family: Poppins;
+  font-family: Inter;
   font-style: normal;
   font-weight: normal;
-  font-size: 16px;
+  font-size: 14px;
+  /* font-weight: bold; */
   line-height: 24px;
   text-align: center;
   color: #ffffff;
@@ -184,6 +198,12 @@
   grid-gap: 27px;
   padding: 18px 20.5px 16px 27px;
   border-radius: 15px 15px 0px 0px;
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 21px;
+  color: #87aafa;
+  height: 25px;
 }
 .resultmodalbody {
   padding: 16px 23px 14px 23px;
@@ -192,6 +212,7 @@
 }
 .modalbody,
 .resultmodalfooter {
+  padding: 5px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
