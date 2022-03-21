@@ -153,7 +153,7 @@ const Borrow = () => {
                             <div>Borrow {info?.symbol}</div>
                             <div className={styles.minimize}>
                                 <div>
-                                    <Image src={SmallD} alt="DField" width={19} height={19} />
+                                    <Image src={`/./icon/${info?.symbol}.svg`} alt="DField" width={19} height={19} />
                                 </div>
                                 <div>{info?.symbol} Reserve Overview</div>
                             </div>
