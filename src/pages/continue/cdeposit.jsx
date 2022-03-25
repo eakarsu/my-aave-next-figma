@@ -3,10 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
+import { ToastContainer, toast } from 'material-react-toastify';
+import 'material-react-toastify/dist/ReactToastify.css';
+
 import DAI from '../../assets/dai.png'
 import Divide from '../../assets/divide3.png'
 import Search from '../../assets/search.png'
-import Down from '../../assets/down.png'
+
+import KovanAssets from '../../constants/kovan.json';
 
 import styles from './share.module.css'
 
@@ -37,6 +41,13 @@ const CDeposit = () => {
         initialReservePriceETH();        
     },[])
 
+    const getBalance = (asset) =>{
+        const data = balances.find((d)=>d.address == asset);
+        if(data !=null){
+            return data.balance;
+        }
+        return 0;
+    }
     const getAPR = (asset) => {
         const data = reserveData.find((d)=>d.address == asset);
         if(data != null){
@@ -45,9 +56,18 @@ const CDeposit = () => {
         return 0;        
     }
 
-    const setCurrentReserve = (address) => {
-        dispatch(changeCurrentReserve(address));
-        router.push(`/deposit`);
+    const setCurrentReserve = (asset) => {
+        if(address!==""){
+            if(getBalance(asset)>0){
+                dispatch(changeCurrentReserve(asset));
+                router.push(`/deposit`);
+            }else{
+                toast.error("Your wallet ballance is not enough.");
+            }
+        }else{
+            toast.error("Please connect your wallet.");
+        }
+        
     }
 
     return (
@@ -84,7 +104,7 @@ const CDeposit = () => {
                         </div>
                         <div className={styles.tablebody}>
                             {
-                                balances.map((item, index) => (
+                                KovanAssets.proto.map((item, index) => (
                                     <div className={styles.tr} key={index} onClick={() => {setCurrentReserve(item.address)}}>
                                         <div className={styles.assets}>
                                             <div className={styles.image}>
@@ -93,7 +113,10 @@ const CDeposit = () => {
                                             <div className={styles.title}>{item.symbol}</div>
                                         </div>
                                         <div className={styles.ballance}>
-                                            <div className={styles.ballance1}>{item?.balance.toFixed(4)}</div>
+                                            {
+                                                address == ""?"-":getBalance(item.address).toFixed(2)
+                                            }
+                                            {/* <div className={styles.ballance1}>{item?.balance.toFixed(4)}</div> */}
                                             <div className={styles.ballance2}></div>
                                         </div>
                                         <div className={styles.rate}>{item?getAPR(item.address).toFixed(4):''}%</div>
@@ -124,6 +147,7 @@ const CDeposit = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer />
         </div >
     )
 }

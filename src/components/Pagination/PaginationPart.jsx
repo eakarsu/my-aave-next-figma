@@ -6,6 +6,7 @@ import Pagination from './Pagination'
 
 import data from './data.json'
 
+
 // import style
 import styles from './paginationpart.module.css'
 

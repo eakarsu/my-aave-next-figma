@@ -1,7 +1,7 @@
 [
     {
         "testid": "1",
-        "assets": "DAI",
+        "assets": "DAO",
         "size": "$2.1B",
         "total": "$1.69B",
         "commission": "4.04%",
@@ -9,7 +9,7 @@
     },
     {
         "testid": "2",
-        "assets": "DAI",
+        "assets": "AAVE",
         "size": "$2.1B",
         "total": "$1.69B",
         "commission": "4.04%",

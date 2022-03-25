@@ -7,10 +7,6 @@ import ProgressBar from "progressbar.js";
 
 import styles from "./mydashboard.module.css";
 
-import Minimize from "../../assets/minimize.png";
-import Info from "../../assets/info.png";
-import DAI from "../../assets/dai.png";
-import AAVE from "../../assets/aave.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { useDataProvider } from "../../hooks/useDataProvider";
 import { useWeb3Context } from "../../hooks/web3/web3-context";
