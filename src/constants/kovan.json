@@ -5,7 +5,7 @@
             "aTokenSymbol": "aAAVE",
             "stableDebtTokenAddress": "0x72d2Aea8aCcD3277D90093a974eFf3e1945871D7",
             "variableDebtTokenAddress": "0x5aF7bAC415D9c249176ea233E92646E5c9288b92",
-            "symbol": "AAVE",
+            "symbol": "aave",
             "address": "0xB597cd8D3217ea6477232F9217fa70837ff667Af",
             "decimals": 18
         },
@@ -14,7 +14,7 @@
             "aTokenSymbol": "aBAT",
             "stableDebtTokenAddress": "0x07a0B32983ab8203E8C3493F0AbE5bFe784fAa15",
             "variableDebtTokenAddress": "0xcE271C229576605bdabD0A3D664685cbC383f3a6",
-            "symbol": "BAT",
+            "symbol": "bat",
             "address": "0x2d12186Fbb9f9a8C28B3FfdD4c42920f8539D738",
             "decimals": 18
         },
@@ -23,7 +23,7 @@
             "aTokenSymbol": "aBUSD",
             "stableDebtTokenAddress": "0x597c5d0390E7e995d36F2e49F9eD979697723bE9",
             "variableDebtTokenAddress": "0xB85eCAd7a9C9F09749CeCF84122189A7908eC934",
-            "symbol": "BUSD",
+            "symbol": "busd",
             "address": "0x4c6E1EFC12FDfD568186b7BAEc0A43fFfb4bCcCf",
             "decimals": 18
         },
@@ -32,7 +32,7 @@
             "aTokenSymbol": "aDAI",
             "stableDebtTokenAddress": "0x3B91257Fe5CA63b4114ac41A0d467D25E2F747F3",
             "variableDebtTokenAddress": "0xEAbBDBe7aaD7d5A278da40967E62C8c8Fe5fAec8",
-            "symbol": "DAI",
+            "symbol": "dai",
             "address": "0xFf795577d9AC8bD7D90Ee22b6C1703490b6512FD",
             "decimals": 18
         },
@@ -41,7 +41,7 @@
             "aTokenSymbol": "aENJ",
             "stableDebtTokenAddress": "0x8af08B5874380E1F1816e30bE12d773f4EB70e67",
             "variableDebtTokenAddress": "0xc11e09B03634144a1862E14ef7569DbEb4b7F3a2",
-            "symbol": "ENJ",
+            "symbol": "enj",
             "address": "0xC64f90Cd7B564D3ab580eb20a102A8238E218be2",
             "decimals": 18
         },
@@ -50,7 +50,7 @@
             "aTokenSymbol": "aKNC",
             "stableDebtTokenAddress": "0x7f4E5bA1eE5dCAa4440371ec521cBc130De12E5e",
             "variableDebtTokenAddress": "0x196d717b2D8a5694572C2742343C333EA27B8288",
-            "symbol": "KNC",
+            "symbol": "knc",
             "address": "0x3F80c39c0b96A0945f9F0E9f55d8A8891c5671A8",
             "decimals": 18
         },
@@ -59,7 +59,7 @@
             "aTokenSymbol": "aLINK",
             "stableDebtTokenAddress": "0x0DBEE55AB73e3C14421d3f437a218ea99A520556",
             "variableDebtTokenAddress": "0xcCead10A3BA54b1FA6D107b63B7D5e5e2f9888D8",
-            "symbol": "LINK",
+            "symbol": "link",
             "address": "0xAD5ce863aE3E4E9394Ab43d4ba0D80f419F61789",
             "decimals": 18
         },
@@ -68,7 +68,7 @@
             "aTokenSymbol": "aMANA",
             "stableDebtTokenAddress": "0xd4aEcF57cbcfeA373565DE75537aAc911EAF1759",
             "variableDebtTokenAddress": "0xaEE5AA094B55b6538388A4E8CBAe9E81Bfe815e6",
-            "symbol": "MANA",
+            "symbol": "mana",
             "address": "0x738Dc6380157429e957d223e6333Dc385c85Fec7",
             "decimals": 18
         },
@@ -77,7 +77,7 @@
             "aTokenSymbol": "aMKR",
             "stableDebtTokenAddress": "0xC37AadA7758e10a49bdECb9078753d5D096A4649",
             "variableDebtTokenAddress": "0xB86a93aA1325e4F58E3dbA7CE9DA251D83374fA2",
-            "symbol": "MKR",
+            "symbol": "mkr",
             "address": "0x61e4CAE3DA7FD189e52a4879C7B8067D7C2Cc0FA",
             "decimals": 18
         },
@@ -86,7 +86,7 @@
             "aTokenSymbol": "aREN",
             "stableDebtTokenAddress": "0xc66a5fd3Bd3D0329895ceE5755e161FD89c2EecD",
             "variableDebtTokenAddress": "0x75f318b9B40c5bEb0EEAdab5294C4108A376a22d",
-            "symbol": "REN",
+            "symbol": "ren",
             "address": "0x5eebf65A6746eed38042353Ba84c8e37eD58Ac6f",
             "decimals": 18
         },
@@ -95,7 +95,7 @@
             "aTokenSymbol": "aSNX",
             "stableDebtTokenAddress": "0x14B7a7Ab57190aEc3210303ef1cF29088535B329",
             "variableDebtTokenAddress": "0x7dF2a710751cb9f1FD392107187e4Aed0Ae867b0",
-            "symbol": "SNX",
+            "symbol": "snx",
             "address": "0x7FDb81B0b8a010dd4FFc57C3fecbf145BA8Bd947",
             "decimals": 18
         },
@@ -104,7 +104,7 @@
             "aTokenSymbol": "aSUSD",
             "stableDebtTokenAddress": "0xB155258d3c18dd5D41e8838c8b45CaE1B17a11D9",
             "variableDebtTokenAddress": "0xf3B942441Bd9d335E64413BeA6b76a49A5853C54",
-            "symbol": "sUSD",
+            "symbol": "susd",
             "address": "0x99b267b9D96616f906D53c26dECf3C5672401282",
             "decimals": 18
         },
@@ -113,7 +113,7 @@
             "aTokenSymbol": "aTUSD",
             "stableDebtTokenAddress": "0x082576C4CfC2eE1e0b8088B84d50CEb97CD84E49",
             "variableDebtTokenAddress": "0xC0cFab5E4A9D8DA2Bc98D0a2b3f9dc20f7eec19C",
-            "symbol": "TUSD",
+            "symbol": "tusd",
             "address": "0x016750AC630F711882812f24Dba6c95b9D35856d",
             "decimals": 18
         },
@@ -122,7 +122,7 @@
             "aTokenSymbol": "aUSDC",
             "stableDebtTokenAddress": "0x252C017036b144A812b53BC122d0E67cBB451aD4",
             "variableDebtTokenAddress": "0xBE9B058a0f2840130372a81eBb3181dcE02BE957",
-            "symbol": "USDC",
+            "symbol": "usdc",
             "address": "0xe22da380ee6B445bb8273C81944ADEB6E8450422",
             "decimals": 6
         },
@@ -131,7 +131,7 @@
             "aTokenSymbol": "aUSDT",
             "stableDebtTokenAddress": "0xf3DCeaDf668607bFCF565E84d9644c42eea518cd",
             "variableDebtTokenAddress": "0xa6EfAF3B1C6c8E2be44818dB64E4DEC7416983a1",
-            "symbol": "USDT",
+            "symbol": "usdt",
             "address": "0x13512979ADE267AB5100878E2e0f485B568328a4",
             "decimals": 6
         },
@@ -140,7 +140,7 @@
             "aTokenSymbol": "aWBTC",
             "stableDebtTokenAddress": "0x45b85733E2609B9Eb18DbF1315765ddB8431e0B6",
             "variableDebtTokenAddress": "0x9b8107B86A3cD6c8d766B30d3aDD046348bf8dB4",
-            "symbol": "WBTC",
+            "symbol": "wbtc",
             "address": "0xD1B98B6607330172f1D991521145A22BCe793277",
             "decimals": 8
         },
@@ -149,7 +149,7 @@
             "aTokenSymbol": "aWETH",
             "stableDebtTokenAddress": "0x1F85D0dc45332D00aead98D26db0735350F80D18",
             "variableDebtTokenAddress": "0xDD13CE9DE795E7faCB6fEC90E346C7F3abe342E2",
-            "symbol": "WETH",
+            "symbol": "weth",
             "address": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
             "decimals": 18
         },
@@ -158,7 +158,7 @@
             "aTokenSymbol": "aYFI",
             "stableDebtTokenAddress": "0x7417855ed88C62e610e612Be52AeE510703Dff04",
             "variableDebtTokenAddress": "0xfF682fF79FEb2C057eC3Ff1e083eFdC66f9b37FB",
-            "symbol": "YFI",
+            "symbol": "yfi",
             "address": "0xb7c325266ec274fEb1354021D27FA3E3379D840d",
             "decimals": 18
         },
@@ -167,7 +167,7 @@
             "aTokenSymbol": "aZRX",
             "stableDebtTokenAddress": "0x7488Eb7fce7e31b91eB9cA4158d54D92e4BB03D7",
             "variableDebtTokenAddress": "0x7a1C28e06bcb4b1fF4768BC2CB9cd33b7622cD62",
-            "symbol": "ZRX",
+            "symbol": "zrx",
             "address": "0xD0d76886cF8D952ca26177EB7CfDf83bad08C00C",
             "decimals": 18
         },
@@ -176,7 +176,7 @@
             "aTokenSymbol": "aUNI",
             "stableDebtTokenAddress": "0x7A43B2653FF42BDE048e3b14fB42028956a7B6b1",
             "variableDebtTokenAddress": "0x10339d6562e8867bB93506572fF8Aea94B2fF656",
-            "symbol": "UNI",
+            "symbol": "uni",
             "address": "0x075A36BA8846C6B6F53644fDd3bf17E5151789DC",
             "decimals": 18
         },
@@ -185,7 +185,7 @@
             "aTokenSymbol": "aAMPL",
             "stableDebtTokenAddress": "0x9157d57DC97A7AFFC7b0a78E78fe25e1401B1dCc",
             "variableDebtTokenAddress": "0xb7b7AF565495670713C92B8848fC8A650a968F81",
-            "symbol": "AMPL",
+            "symbol": "ampl",
             "address": "0x3E0437898a5667a4769B1Ca5A34aAB1ae7E81377",
             "decimals": 9
         }
