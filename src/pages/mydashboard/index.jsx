@@ -212,7 +212,7 @@ const MyDashboard = () => {
                                 deposited.map((item,i)=>{
                                     return <div key={i} className={styles.child}>
                                                 <div className={styles.bdeposits}>
-                                                    <Image src={`/./icon/${item.symbol}.svg`} alt={item.symbol} width={30} height={30} />
+                                                    <Image src={`/./icon/${item.symbol}.png`} alt={item.symbol} width={30} height={30} />
                                                     <div>{item.symbol}</div>
                                                 </div>
                                                 <div className={styles.bballance}>
@@ -289,7 +289,7 @@ const MyDashboard = () => {
                                 borrowed.map((item, index)=>{
                                     return <div key={index} className={styles.child}>
                                                 <div className={styles.bdeposits}>
-                                                    <Image src={`/./icon/${item.symbol}.svg`} alt="DAI" width={30} height={30} />
+                                                    <Image src={`/./icon/${item.symbol}.png`} alt="DAI" width={30} height={30} />
                                                     <div>{item.symbol}</div>
                                                 </div>
                                                 <div className={styles.bballance}>

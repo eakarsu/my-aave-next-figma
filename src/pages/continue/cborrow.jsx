@@ -154,7 +154,7 @@ const CBorrow = () => {
                                     <div className={styles.tr} key={index} onClick={() => setCurrentReserve(item.address)}>
                                         <div className={styles.assets}>
                                             <div className={styles.image}>
-                                                <Image src={`/./icon/${item.symbol}.svg`} alt={item.symbol} width={41} height={41} />
+                                                <Image src={`/./icon/${item.symbol}.png`} alt={item.symbol} width={41} height={41} />
                                             </div>
                                             <div className={styles.title}>{item.symbol}</div>
                                         </div>
@@ -181,7 +181,7 @@ const CBorrow = () => {
                                 return <div key={i} className={styles.modalbody}>
                                             <div className={styles.reassets}>
                                                 <div className={styles.image}>
-                                                    <Image src={`/./icon/${item.symbol}.svg`} alt={item.symbol} width={41} height={41} />
+                                                    <Image src={`/./icon/${item.symbol}.png`} alt={item.symbol} width={41} height={41} />
                                                 </div>
                                                 <div className={styles.title}>{item.symbol}</div>
                                             </div>
