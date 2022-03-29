@@ -89,7 +89,11 @@ const Borrow = () => {
 
     const getLiquidity = () => {
         const idx =  reserveData.findIndex(d=>d.address == currentReserve);
+        console.log(idx);
+        console.log('bbbbbbbreserve', reserveData);
         if(idx!=-1&&info){
+            console.log(info.decimal);
+            console.log(reserveData[idx])
           const availableLiquidity = reserveData[idx]?.availableLiquidity/Math.pow(10, info.decimal)||0;
           return availableLiquidity;
         }
@@ -153,7 +157,7 @@ const Borrow = () => {
                             <div>Borrow {info?.symbol}</div>
                             <div className={styles.minimize}>
                                 <div>
-                                    <Image src={`/./icon/${info?.symbol}.png`} alt="DField" width={19} height={19} />
+                                    <Image src={`/icon/${info?.symbol}.png`} alt="DField" width={19} height={19} />
                                 </div>
                                 <div>{info?.symbol} Reserve Overview</div>
                             </div>

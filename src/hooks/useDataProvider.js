@@ -14,15 +14,21 @@ export const useDataProvider = () => {
     const dpContract = useDataProviderContract();
     const oracleContract =  usePriceOracleContract()
 
+    
     const initialReserveData = () => {
         let reserves = [];
         KovanAssets.proto.forEach(async(v,i)=>{
-            await dpContract.methods.getReserveData(v.address).call().then((value) => {
-                reserves = [...reserves, {address:v.address, availableLiquidity:value.availableLiquidity, liquidityRate:value.liquidityRate, variableBorrowRate:value.variableBorrowRate, stableBorrowRate:value.stableBorrowRate }];                                        
-            });                
-            if(i===KovanAssets.proto.length-1){
-                dispatch(changeReserveData(reserves));
-            }                                            
+                           
+            setTimeout(async()=>{
+                await dpContract.methods.getReserveData(v.address).call().then((value) => {
+                    reserves = [...reserves, {address:v.address, availableLiquidity:value.availableLiquidity, liquidityRate:value.liquidityRate, variableBorrowRate:value.variableBorrowRate, stableBorrowRate:value.stableBorrowRate }];                                        
+                }); 
+                if(i===KovanAssets.proto.length-1){
+                    console.log('reservessssss', reserves);
+                    dispatch(changeReserveData(reserves));
+                }  
+            },500);
+                                                      
         })
     }
 
