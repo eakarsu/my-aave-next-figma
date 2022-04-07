@@ -9,7 +9,7 @@ import ATokenABI from "../abi/AToken.json";
 import Web3 from 'web3';
 // import { AbiItem } from 'web3-utils';
 
-const web3 = new Web3(Web3.givenProvider || "http://localhost:3000");
+const web3 = new Web3(Web3.givenProvider || "http://34.132.227.231/ws2/");
 const addresses = getAddresses();
 
 export const useLendingPoolContract = () => {

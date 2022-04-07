@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 export const networkSlice = createSlice({
   name: 'network',
   initialState: {
-    name: "Kovan",
+    name: "Erol",
   },
   reducers: {
     changeNetwork: (state, action) => {

@@ -1,6 +1,6 @@
 export function getChainIdByName(str){
     let chainId =1;
-    if(str == "Ethereum"){
+    if(str == "Erol"){
         chainId = 1;
     }
 
@@ -21,9 +21,9 @@ export function getChainIdByName(str){
 
 
 export function getRPCByChainID(chainId){
-    let rpc = "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
+    let rpc = " http://34.132.227.231/ws2/";
     if(chainId ==1){
-        rpc = "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
+        rpc = " http://34.132.227.231/ws2/";
     }
 
     if(chainId==56){

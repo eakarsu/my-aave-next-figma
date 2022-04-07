@@ -1,5 +1,5 @@
 const getHexChainIdByName=(network)=>{
-    if(network == "Ethereum")
+    if(network == "Erol")
         return 1;
     if(network == "BSC")
         return 38;
@@ -25,15 +25,14 @@ const getChainInfo=(network)=>{
                 decimals: 18,
             },
         };
-    if(network == "Polygon")
+    if(network == "Erol")
         return {
-            chainId: "0x89",
-            chainName: "Polygon Mainnet",
-            rpcUrls:["https://polygon-rpc.com/"],
-            blockExplorerUrls:["https://polygonscan.com/"],
+            chainId: "0x01",
+            chainName: "Erol",
+            rpcUrls:["http://34.132.227.231/ws2/"],            
             nativeCurrency: {
-                name: "MATIC",
-                symbol: "MATIC",
+                name: "ETH",
+                symbol: "ETH",
                 decimals: 18,
             },
         }
