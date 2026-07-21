@@ -1,0 +1,31 @@
+name: Archive integrity
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify archive boundary
+        run: node scripts/verify-archive.mjs
+      - name: Scan current tree for credentials
+        run: node scripts/scan-secrets.mjs
+      - name: Prove lifecycle commands fail closed
+        shell: bash
+        run: |
+          set +e
+          node scripts/archived-command.mjs ci-launch-check
+          status=$?
+          set -e
+          test "$status" -eq 78

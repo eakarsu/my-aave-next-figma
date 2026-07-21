@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "project": "my-aave-next-figma",
+  "disposition": "archived-read-only-design-reference",
+  "supportedUse": "internal provenance and design review only",
+  "publicDeploymentAllowed": false,
+  "publicRedistributionAllowed": false,
+  "dependencyInstallationAllowed": false,
+  "applicationExecutionAllowed": false,
+  "baseline": {
+    "remote": "https://github.com/eakarsu/my-aave-next-figma",
+    "commit": "a49d93544ad433ab5e4380d0cc1107d7e3afa2b2",
+    "tree": "cbdec098e14d455245f721b53d5e041a5c3c8c3b",
+    "headCommitCount": 3,
+    "allReachableCommitCount": 21,
+    "trackedFileCount": 133,
+    "detectedLicense": null
+  },
+  "historySecurityFinding": {
+    "status": "open-provider-revocation-and-history-remediation-required",
+    "reachableRef": "refs/remotes/origin/feature",
+    "candidateCount": 2,
+    "publicIdentifierFalsePositiveCount": 341,
+    "details": "HISTORY_SECURITY_FINDINGS.md"
+  },
+  "protectedPayload": {
+    "paths": [
+      ".babelrc",
+      ".eslintrc.json",
+      "next.config.js",
+      "public",
+      "src",
+      "yarn-error.log",
+      "yarn.lock"
+    ],
+    "sha256": "1b7782f8b493eba8f0540c38afe53bc47ba8cbe797d4e09ca6a27c95f10e6cc6",
+    "allowedChangesFromBaseline": [
+      "src/pages/_app.js",
+      "src/styles/globals.css"
+    ]
+  },
+  "supportedCommands": [
+    "node scripts/verify-archive.mjs",
+    "node scripts/scan-secrets.mjs",
+    "npm run archive:verify",
+    "npm run security:scan"
+  ],
+  "prohibitedCapabilities": [
+    "wallet connection",
+    "chain or contract calls",
+    "market or account data ingestion",
+    "transaction construction or submission",
+    "public deployment"
+  ]
+}

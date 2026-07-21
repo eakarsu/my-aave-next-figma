@@ -1,34 +1,27 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Archived DeFi UI design reference
 
-## Getting Started
+This repository is a frozen, read-only snapshot of a 2021 Next.js interface mock. It is **not** an Aave client, wallet, trading application, or production service.
 
-First, run the development server:
+The screens contain hard-coded presentation data. There is no wallet connection, chain RPC, contract integration, licensed market feed, persistence layer, transaction submission, reconciliation, or operational control plane. The repository has no detected license grant, so it is retained for internal provenance and design review only; do not publicly redistribute or deploy it.
 
-```bash
-npm run dev
-# or
-yarn dev
+## Supported use
+
+The only supported commands use the host's Node.js runtime and install no dependencies:
+
+```sh
+node scripts/verify-archive.mjs
+node scripts/scan-secrets.mjs
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Equivalent package commands are `npm run archive:verify` and `npm run security:scan`. Package installation and the former `dev`, `build`, `start`, `lint`, and `test` commands fail closed with exit code 78.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+The archived dependency graph is intentionally not installed or executed. See `DEPENDENCY_RISK.md` for the recorded advisory snapshot and `ARCHIVE_STATUS.md` for the boundary and reactivation process.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## Safety boundary
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- Never enter a seed phrase, private key, wallet approval, account credential, or real transaction into this interface.
+- Do not use the displayed balances, prices, yields, protocol labels, or risk figures for financial decisions.
+- A direct framework launch outside the guarded commands is unsupported. A persistent on-screen banner identifies the mock if somebody bypasses the guard.
+- Turning this snapshot into a live finance product requires a separately approved project with licensed integrations, deterministic risk controls, human approvals, ledger-grade accounting, custody reconciliation, security review, and independent legal/compliance approval.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+See `workspace-governance.json` for the machine-readable disposition.

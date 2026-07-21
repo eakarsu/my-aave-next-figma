@@ -3,6 +3,27 @@ html {
 }
 body {
   margin: 0 !important;
+  padding-top: 58px;
+}
+.archiveBoundary {
+  align-items: center;
+  background: #34145f;
+  box-sizing: border-box;
+  color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  gap: 5px;
+  justify-content: center;
+  left: 0;
+  min-height: 58px;
+  padding: 10px 18px;
+  position: fixed;
+  right: 0;
+  text-align: center;
+  top: 0;
+  z-index: 10000;
 }
 #nprogress {
   pointer-events: "none";

@@ -2,10 +2,14 @@
   "name": "aavepro",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "preinstall": "node scripts/archived-command.mjs dependency-install",
+    "dev": "node scripts/archived-command.mjs dev",
+    "build": "node scripts/archived-command.mjs build",
+    "start": "node scripts/archived-command.mjs start",
+    "lint": "node scripts/archived-command.mjs lint",
+    "test": "node scripts/archived-command.mjs test",
+    "archive:verify": "node scripts/verify-archive.mjs",
+    "security:scan": "node scripts/scan-secrets.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.6.0",
